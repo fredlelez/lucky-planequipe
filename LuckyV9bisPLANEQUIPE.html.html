@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lucky">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzBkMWYzYyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3R5bGU9InN0b3AtY29sb3I6IzFlM2E2ZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwYTE2MjgiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTEwIiByeT0iMTEwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDx0ZXh0IHg9IjI1NiIgeT0iMzAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwgQmxhY2siIGZvbnQtc2l6ZT0iMjAwIiBmaWxsPSIjZmNkMzRkIj7inKY8L3RleHQ+Cjwvc3ZnPgo=">
+<title>Lucky — PLANEQUIPE</title>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.1/tesseract.min.js'></script>
+<style>
+:root {
+  --bg:#f8fafc; --surface:#ffffff; --surface2:#f1f5f9; --border:#e2e8f0;
+  --blue:#2563eb; --blue-light:#3b82f6; --blue-pale:#eff6ff;
+  --orange:#f97316; --orange-pale:#fff7ed; --orange-light:#fb923c;
+  --dark:#0f172a; --text:#334155; --muted:#94a3b8; --green:#10b981;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+.screen { display:none; min-height:100vh; flex-direction:column; }
+.screen.active { display:flex; }
+
+/* S0 ACCUEIL */
+#s0 { background:var(--bg); align-items:center; justify-content:center; padding:32px 20px; text-align:center; }
+.logo-icon { font-size:52px; display:block; margin-bottom:6px; }
+.logo-name { font-size:26px; font-weight:800; letter-spacing:4px; color:var(--dark); text-transform:uppercase; }
+.lucky-pill { display:inline-block; background:var(--orange); color:white; font-size:10px; font-weight:700; letter-spacing:3px; padding:4px 14px; border-radius:20px; margin-top:6px; margin-bottom:24px; }
+.welcome-title { font-size:22px; font-weight:800; color:var(--dark); margin-bottom:6px; }
+.welcome-sub { font-size:13px; color:var(--muted); margin-bottom:24px; line-height:1.6; }
+.sector-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:440px; margin-bottom:22px; }
+.sector-btn { background:var(--surface); border:1.5px solid var(--border); border-radius:14px; padding:16px 12px; cursor:pointer; text-align:center; transition:all 0.15s; }
+.sector-btn.selected { border-color:var(--blue); background:var(--blue-pale); }
+.sector-btn:active { transform:scale(0.97); }
+.sector-icon { font-size:26px; display:block; margin-bottom:5px; }
+.sector-name { font-size:11px; font-weight:600; color:var(--text); line-height:1.3; }
+.sector-btn.selected .sector-name { color:var(--blue); }
+.btn-start { width:100%; max-width:440px; background:var(--blue); color:white; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:15px; border-radius:50px; border:none; cursor:pointer; box-shadow:0 4px 20px rgba(37,99,235,0.25); transition:all 0.2s; margin-top:4px; }
+.btn-start:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; }
+
+/* S0B PAGE DE GARDE / SCAN */
+#s0b { background:var(--bg); align-items:center; justify-content:flex-start; padding:0 0 32px 0; }
+.s0b-header { width:100%; background:var(--surface); border-bottom:1px solid var(--border); padding:14px 18px; display:flex; align-items:center; gap:12px; }
+.s0b-content { width:100%; max-width:480px; padding:24px 20px; margin:0 auto; }
+.s0b-title { font-size:18px; font-weight:800; color:var(--dark); margin-bottom:4px; }
+.s0b-sub { font-size:12px; color:var(--muted); margin-bottom:20px; line-height:1.5; }
+.scan-zone { background:var(--surface); border:2px dashed var(--border); border-radius:16px; padding:24px; text-align:center; margin-bottom:20px; cursor:pointer; transition:all 0.2s; }
+.scan-zone:active { background:var(--blue-pale); border-color:var(--blue); }
+.scan-icon { font-size:40px; margin-bottom:10px; }
+.scan-title { font-size:14px; font-weight:700; color:var(--dark); margin-bottom:4px; }
+.scan-sub { font-size:11px; color:var(--muted); }
+.scan-btn { display:inline-block; background:var(--blue); color:white; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:12px 24px; border-radius:50px; border:none; cursor:pointer; margin-top:12px; box-shadow:0 4px 14px rgba(37,99,235,0.25); }
+.scan-processing { display:none; align-items:center; justify-content:center; gap:10px; padding:14px; background:var(--blue-pale); border-radius:12px; margin-bottom:12px; }
+.scan-processing.active { display:flex; }
+.spinner { width:20px; height:20px; border:3px solid rgba(37,99,235,0.2); border-top-color:var(--blue); border-radius:50%; animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.divider { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.divider-line { flex:1; height:1px; background:var(--border); }
+.divider-txt { font-size:11px; color:var(--muted); font-weight:500; }
+.field-group { width:100%; margin-bottom:12px; }
+.field-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:6px; }
+.field-input { width:100%; background:var(--surface); border:1.5px solid var(--border); border-radius:12px; padding:13px 16px; color:var(--dark); font-size:14px; outline:none; transition:border-color 0.2s; }
+.field-input:focus { border-color:var(--blue); }
+.field-input.filled { border-color:var(--green); background:#f0fdf4; }
+.geo-row { display:flex; gap:8px; }
+.btn-geo { background:#eff6ff; border:1.5px solid var(--blue); border-radius:12px; padding:0 16px; cursor:pointer; font-size:20px; flex-shrink:0; }
+.btn-next-s0b { width:100%; background:var(--orange); color:white; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:15px; border-radius:50px; border:none; cursor:pointer; box-shadow:0 4px 20px rgba(249,115,22,0.25); margin-top:8px; }
+.btn-next-s0b:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; }
+.scan-result-box { display:none; background:#f0fdf4; border:1.5px solid rgba(16,185,129,0.3); border-radius:12px; padding:12px 14px; margin-bottom:14px; }
+.scan-result-box.active { display:block; }
+.scan-result-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--green); margin-bottom:6px; }
+.scan-result-txt { font-size:12px; color:var(--text); line-height:1.6; }
+
+/* S1 QUESTIONS */
+#s1 { background:var(--bg); }
+.topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:14px 18px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:10; }
+.back-btn { width:34px; height:34px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px; flex-shrink:0; }
+.progress-wrap { flex:1; }
+.progress-meta { display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:500; }
+.progress-track { height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+.progress-fill { height:100%; background:linear-gradient(90deg,var(--blue),var(--orange)); border-radius:2px; transition:width 0.4s ease; }
+.q-scroll { flex:1; overflow-y:auto; padding-bottom:8px; }
+.bloc-tag { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--blue); padding:18px 20px 0; }
+.q-card { padding:14px 20px; animation:fadeIn 0.25s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+.q-num { font-size:10px; color:var(--muted); margin-bottom:5px; }
+.q-title { font-size:16px; font-weight:700; color:var(--dark); line-height:1.3; margin-bottom:14px; }
+.opts { display:flex; flex-direction:column; gap:7px; }
+.opt { display:flex; align-items:center; gap:10px; background:var(--surface); border:1.5px solid var(--border); border-radius:11px; padding:11px 13px; cursor:pointer; transition:all 0.15s; user-select:none; }
+.opt.sel { border-color:var(--blue); background:var(--blue-pale); }
+.opt-chk { width:18px; height:18px; border:2px solid var(--border); border-radius:5px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; transition:all 0.15s; }
+.opt.sel .opt-chk { background:var(--blue); border-color:var(--blue); color:white; }
+.opt-lbl { font-size:13px; color:var(--text); flex:1; line-height:1.3; }
+.opt.sel .opt-lbl { color:var(--blue); font-weight:500; }
+.scale-opts { display:grid; grid-template-columns:repeat(6,1fr); gap:5px; }
+.scale-opt { background:var(--surface); border:1.5px solid var(--border); border-radius:9px; padding:9px 4px; text-align:center; cursor:pointer; font-size:12px; color:var(--muted); font-weight:500; transition:all 0.15s; }
+.scale-opt.sel { background:var(--blue-pale); border-color:var(--blue); color:var(--blue); font-weight:700; }
+.txt-area { width:100%; background:var(--surface); border:1.5px solid var(--border); border-radius:11px; padding:13px; color:var(--dark); font-size:13px; min-height:75px; resize:none; outline:none; }
+.txt-area:focus { border-color:var(--blue); }
+.q-nav { padding:14px 18px; display:flex; gap:8px; background:var(--surface); border-top:1px solid var(--border); position:sticky; bottom:0; }
+.btn-prev-q { background:var(--surface2); border:1px solid var(--border); color:var(--muted); font-size:18px; padding:12px 16px; border-radius:11px; cursor:pointer; }
+.btn-next-q { flex:1; background:var(--blue); color:white; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:13px; border-radius:11px; border:none; cursor:pointer; }
+
+/* S2 ROI */
+#s2 { background:var(--bg); overflow-y:auto; }
+.roi-scroll { padding:20px; }
+.roi-hdr { text-align:center; margin-bottom:20px; }
+.roi-company { font-size:12px; color:var(--muted); margin-bottom:3px; }
+.roi-title { font-size:20px; font-weight:800; color:var(--dark); margin-bottom:6px; }
+.sector-pill { display:inline-block; font-size:11px; font-weight:600; padding:4px 12px; border-radius:20px; background:var(--blue-pale); border:1px solid rgba(37,99,235,0.2); color:var(--blue); }
+.roi-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+.roi-c { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 12px; text-align:center; }
+.roi-c.main { background:var(--blue-pale); border-color:rgba(37,99,235,0.2); }
+.roi-c.orng { background:var(--orange-pale); border-color:rgba(249,115,22,0.2); }
+.roi-v { font-size:22px; font-weight:800; color:var(--blue); display:block; line-height:1; }
+.roi-c.orng .roi-v { color:var(--orange); }
+.roi-u { font-size:10px; color:var(--blue); font-weight:600; display:block; margin-bottom:3px; }
+.roi-c.orng .roi-u { color:var(--orange); }
+.roi-l { font-size:11px; color:var(--muted); line-height:1.3; }
+.invest-box { background:var(--orange-pale); border:1.5px solid rgba(249,115,22,0.3); border-radius:14px; padding:14px 16px; margin-bottom:14px; display:flex; gap:12px; align-items:flex-start; }
+.invest-icon { font-size:22px; flex-shrink:0; }
+.invest-txt p { font-size:13px; color:var(--text); line-height:1.5; }
+.invest-txt p strong { color:var(--orange); font-size:14px; }
+.invest-txt small { font-size:11px; color:var(--muted); }
+.bench-box { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px; }
+.bench-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--blue); margin-bottom:12px; }
+.bench-row { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+.bench-lbl { font-size:11px; color:var(--muted); width:130px; flex-shrink:0; line-height:1.3; }
+.bench-track { flex:1; height:7px; background:var(--surface2); border-radius:4px; position:relative; overflow:visible; }
+.bench-avg-mark { position:absolute; top:-4px; width:2px; height:15px; background:var(--muted); border-radius:1px; z-index:2; }
+.bench-fill { height:100%; border-radius:4px; }
+.bench-val { font-size:11px; font-weight:700; width:36px; text-align:right; flex-shrink:0; }
+.bench-avg-note { font-size:9px; color:var(--muted); text-align:right; margin-bottom:8px; }
+.position-box { background:var(--orange-pale); border:1px solid rgba(249,115,22,0.2); border-radius:14px; padding:14px; margin-bottom:14px; display:flex; gap:10px; }
+.position-txt { font-size:12px; color:var(--text); line-height:1.6; }
+.position-txt strong { color:var(--orange); }
+.offer-box { background:var(--blue-pale); border:1px solid rgba(37,99,235,0.2); border-radius:14px; padding:16px; margin-bottom:14px; }
+.offer-title { font-size:15px; font-weight:700; color:var(--dark); margin-bottom:10px; }
+.offer-items { display:flex; flex-direction:column; gap:7px; margin-bottom:14px; }
+.offer-item { display:flex; gap:7px; font-size:12px; color:var(--text); align-items:flex-start; }
+.offer-chk { color:var(--blue); font-weight:700; }
+.offer-price { font-size:30px; font-weight:800; color:var(--orange); display:block; text-align:center; }
+.offer-price-sub { font-size:11px; color:var(--muted); text-align:center; margin-top:2px; }
+.btn-sign { width:100%; background:var(--orange); color:white; font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:16px; border-radius:12px; border:none; cursor:pointer; margin-bottom:8px; box-shadow:0 4px 16px rgba(249,115,22,0.3); }
+.btn-email { width:100%; background:var(--surface); color:var(--blue); font-size:13px; font-weight:600; padding:13px; border-radius:12px; border:1.5px solid rgba(37,99,235,0.25); cursor:pointer; margin-bottom:8px; }
+.btn-back-q { width:100%; background:transparent; color:var(--muted); font-size:12px; padding:10px; border:none; cursor:pointer; }
+
+/* S3 ENVOI */
+#s3 { background:var(--bg); align-items:center; justify-content:center; padding:28px 20px; text-align:center; }
+.send-icon { font-size:48px; margin-bottom:14px; }
+.send-title { font-size:20px; font-weight:800; color:var(--dark); margin-bottom:6px; }
+.send-sub { font-size:13px; color:var(--muted); margin-bottom:24px; line-height:1.6; }
+.send-form { width:100%; max-width:400px; text-align:left; }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.btn-send-go { width:100%; background:var(--blue); color:white; font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:15px; border-radius:12px; border:none; cursor:pointer; margin-top:16px; margin-bottom:10px; }
+.btn-skip { width:100%; background:transparent; color:var(--muted); font-size:12px; padding:10px; border:1px solid var(--border); border-radius:12px; cursor:pointer; }
+
+/* S4 CONFIRMATION */
+#s4 { background:var(--bg); align-items:center; justify-content:center; padding:28px 20px; text-align:center; }
+.confirm-icon { font-size:56px; margin-bottom:14px; animation:pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
+@keyframes pop { from{transform:scale(0);opacity:0;} to{transform:scale(1);opacity:1;} }
+.confirm-title { font-size:22px; font-weight:800; color:var(--dark); margin-bottom:6px; }
+.confirm-sub { font-size:13px; color:var(--muted); margin-bottom:20px; }
+.recap-box { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; width:100%; max-width:400px; text-align:left; margin-bottom:20px; }
+.recap-row { display:flex; justify-content:space-between; font-size:12px; padding:6px 0; border-bottom:1px solid var(--border); }
+.recap-row:last-child { border-bottom:none; }
+.recap-lbl { color:var(--muted); }
+.recap-val { color:var(--dark); font-weight:600; }
+.btn-new { background:var(--blue); color:white; font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:15px 32px; border-radius:50px; border:none; cursor:pointer; width:100%; max-width:400px; }
+
+/* VIDEO SCAN */
+#scan-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:100; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+#scan-modal.active { display:flex; }
+#scan-video { width:100%; max-width:480px; border-radius:16px; background:#000; }
+#scan-canvas { display:none; }
+.scan-modal-title { color:white; font-size:16px; font-weight:700; margin-bottom:16px; text-align:center; }
+.scan-modal-sub { color:rgba(255,255,255,0.6); font-size:12px; margin-bottom:20px; text-align:center; }
+.scan-modal-btns { display:flex; gap:10px; margin-top:16px; width:100%; max-width:480px; }
+.btn-capture { flex:2; background:var(--orange); color:white; font-size:13px; font-weight:700; padding:14px; border-radius:12px; border:none; cursor:pointer; }
+.btn-cancel-scan { flex:1; background:rgba(255,255,255,0.15); color:white; font-size:13px; padding:14px; border-radius:12px; border:none; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<!-- MODAL SCAN CAMÉRA -->
+<div id="scan-modal">
+  <div class="scan-modal-title">📷 Scanner la carte de visite</div>
+  <div class="scan-modal-sub">Placez la carte de visite dans le cadre<br>puis appuyez sur Capturer</div>
+  <video id="scan-video" autoplay playsinline muted></video>
+  <canvas id="scan-canvas"></canvas>
+  <div class="scan-modal-btns">
+    <button class="btn-capture" onclick="captureCard()">📸 Capturer</button>
+    <button class="btn-cancel-scan" onclick="closeScan()">Annuler</button>
+  </div>
+</div>
+
+<!-- S0 CHOIX SECTEUR -->
+<div id="s0" class="screen active">
+  <div style="background:var(--bg);align-items:center;justify-content:center;padding:32px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;">
+    <span class="logo-icon">🍀</span>
+    <div class="logo-name">PLANEQUIPE</div>
+    <div class="lucky-pill">✦ LUCKY</div>
+    <div class="welcome-title">Bonjour Frédéric 👋</div>
+    <p class="welcome-sub">Sélectionnez le secteur de votre prospect<br>pour démarrer la découverte.</p>
+    <div class="sector-grid">
+      <div class="sector-btn" data-sector="ev" onclick="pick(this)"><span class="sector-icon">🌿</span><span class="sector-name">Espaces Verts</span></div>
+      <div class="sector-btn" data-sector="ni" onclick="pick(this)"><span class="sector-icon">🧹</span><span class="sector-name">Nettoyage Industriel</span></div>
+      <div class="sector-btn" data-sector="ci" onclick="pick(this)"><span class="sector-icon">🩺</span><span class="sector-name">Cabinet Infirmier</span></div>
+      <div class="sector-btn" data-sector="amb" onclick="pick(this)"><span class="sector-icon">🚑</span><span class="sector-name">Ambulances / VSL</span></div>
+      <div class="sector-btn" data-sector="ram" onclick="pick(this)"><span class="sector-icon">🔧</span><span class="sector-name">Ramonage / Dépannage</span></div>
+      <div class="sector-btn" data-sector="lv" onclick="pick(this)"><span class="sector-icon">🍺</span><span class="sector-name">Livraison Boissons</span></div>
+      <div class="sector-btn" data-sector="ag" onclick="pick(this)"><span class="sector-icon">🚜</span><span class="sector-name">Entretien Agricole</span></div>
+    <div class="sector-btn" data-sector="autre" onclick="pick(this)"><span class="sector-icon">🔍</span><span class="sector-name">Autre métier</span></div>
+    </div>
+    <!-- CHAMP AUTOCOMPLETION AUTRE METIER -->
+    <div class="field-group" id="autre-metier-group" style="display:none;width:100%;max-width:440px;">
+      <label class="field-label">Tapez votre métier</label>
+      <input class="field-input" id="inp-autre-metier" type="text" placeholder="Ex : Boulangerie, Plomberie..." oninput="filterMetiers(this.value)" autocomplete="off">
+      <div id="metier-suggestions" style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-top:4px;max-height:180px;overflow-y:auto;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.1);"></div>
+    </div>
+    <button class="btn-start" id="btn-start" onclick="goToContact()" disabled>Suivant — Saisir le contact →</button>
+  </div>
+</div>
+
+<!-- S0B PAGE DE GARDE / SCAN CARTE DE VISITE -->
+<div id="s0b" class="screen">
+  <div class="s0b-header">
+    <div class="back-btn" onclick="show('s0')">←</div>
+    <div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--orange);">Contact prospect</div>
+      <div style="font-size:10px;color:var(--muted);" id="s0b-sector-label"></div>
+    </div>
+  </div>
+  <div class="s0b-content">
+    <div class="s0b-title">Qui rencontrez-vous ?</div>
+    <p class="s0b-sub">Scannez la carte de visite pour remplir automatiquement, ou saisissez manuellement.</p>
+
+    <!-- ZONE SCAN -->
+    <div class="scan-zone" onclick="openScan()">
+      <div class="scan-icon">📷</div>
+      <div class="scan-title">Scanner la carte de visite</div>
+      <div class="scan-sub">Rapide · Automatique · Sans erreur de frappe</div>
+      <button class="scan-btn">Ouvrir la caméra</button>
+    </div>
+
+    <!-- INDICATEUR TRAITEMENT -->
+    <div class="scan-processing" id="scan-processing">
+      <div class="spinner"></div>
+      <span style="font-size:13px;color:var(--blue);font-weight:600;">Lecture en cours…</span>
+    </div>
+
+    <!-- RÉSULTAT SCAN -->
+    <div class="scan-result-box" id="scan-result-box">
+      <div class="scan-result-title">✓ Carte lue avec succès — vérifiez les informations</div>
+      <div class="scan-result-txt" id="scan-result-txt"></div>
+    </div>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-txt">ou saisissez manuellement</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- FORMULAIRE CONTACT -->
+    <div class="field-group"><label class="field-label">Nom / Prénom *</label><input class="field-input" id="inp-ct" type="text" placeholder="Ex : M. Martin, Gérant" oninput="chkContact()"></div>
+    <div class="field-group"><label class="field-label">Entreprise *</label><input class="field-input" id="inp-co" type="text" placeholder="Ex : Jardins Dupont SARL" oninput="chkContact()"></div>
+    <div class="field-group"><label class="field-label">Email</label><input class="field-input" id="inp-email-contact" type="email" placeholder="contact@entreprise.fr"></div>
+    <div class="field-group"><label class="field-label">Téléphone</label><input class="field-input" id="inp-tel" type="tel" placeholder="06 XX XX XX XX"></div>
+    <div class="field-group">
+      <label class="field-label">Adresse du RDV</label>
+      <div class="geo-row">
+        <input class="field-input" id="inp-addr" type="text" placeholder="Adresse ou appuyez sur 📍" style="flex:1;">
+        <button id="btn-geo" class="btn-geo" type="button">📍</button>
+      </div>
+    </div>
+    <button class="btn-next-s0b" id="btn-next-s0b" onclick="startQuestions()" disabled>Démarrer la découverte →</button>
+  </div>
+</div>
+
+<!-- S1 QUESTIONS -->
+<div id="s1" class="screen">
+  <div class="topbar">
+    <div class="back-btn" onclick="goBack()">←</div>
+    <div class="progress-wrap">
+      <div class="progress-meta"><span id="bloc-info">Bloc 1</span><span id="q-info">Q 1/13</span></div>
+      <div class="progress-track"><div class="progress-fill" id="pbar" style="width:7%"></div></div>
+    </div>
+  </div>
+  <div class="q-scroll" id="qscroll"></div>
+  <div class="q-nav">
+    <button class="btn-prev-q" id="bprev" onclick="prevQ()" style="display:none">←</button>
+    <button class="btn-next-q" id="bnext" onclick="nextQ()">Suivant →</button>
+  </div>
+</div>
+
+<!-- S2 ROI -->
+<div id="s2" class="screen"><div class="roi-scroll" id="roi-content"></div></div>
+
+<!-- S3 ENVOI -->
+<div id="s3" class="screen">
+  <div class="send-icon">📨</div>
+  <div class="send-title">Envoyer la synthèse</div>
+  <p class="send-sub">Le prospect recevra sa synthèse ROI<br>directement par email.</p>
+  <div id="email-preview-box" style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;margin-bottom:16px;width:100%;max-width:400px;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:10px;">📧 Aperçu email prospect</div>
+    <div id="email-preview-content" style="font-size:12px;color:#334155;line-height:1.6;">Complétez le parcours pour voir l'aperçu.</div>
+  </div>
+  <div class="send-form">
+    <div class="field-group"><label class="field-label">Email du prospect</label><input class="field-input" id="inp-email" type="email" placeholder="contact@entreprise.fr"></div>
+    <div class="row2">
+      <div class="field-group"><label class="field-label">Date de rappel</label><input class="field-input" id="inp-date" type="date"></div>
+      <div class="field-group"><label class="field-label">Heure</label><input class="field-input" id="inp-time" type="time" value="10:00"></div>
+    </div>
+    <div class="field-group"><label class="field-label">Note</label><textarea class="txt-area" id="inp-note" style="min-height:55px;" placeholder="Note de rappel..."></textarea></div>
+    <button class="btn-send-go" onclick="doSend()">✉ Envoyer & planifier le rappel</button>
+    <button class="btn-skip" onclick="doSkip()">Passer cette étape</button>
+  </div>
+</div>
+
+<!-- S4 CONFIRMATION -->
+<div id="s4" class="screen">
+  <div class="confirm-icon">✅</div>
+  <div class="confirm-title">RDV enregistré !</div>
+  <p class="confirm-sub" id="csub">La synthèse a été envoyée et le rappel est planifié.</p>
+  <div class="recap-box" id="crecap"></div>
+  <button class="btn-new" onclick="reset()">Nouveau prospect →</button>
+</div>
+
+<!-- S5 BON DE COMMANDE -->
+<div id="s5" class="screen" style="background:#f8fafc;overflow-y:auto;">
+  <div style="background:#fff;border-bottom:3px solid #f97316;padding:16px 20px;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:12px;">
+    <div style="width:34px;height:34px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;" onclick="show('s2')">←</div>
+    <div style="flex:1;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#f97316;">Bon de commande</div>
+      <div style="font-size:10px;color:#94a3b8;">PLANEQUIPE Projet · Partenaire Pilote</div>
+    </div>
+    <div style="font-size:10px;color:#94a3b8;" id="bc-date"></div>
+  </div>
+  <div style="padding:20px;">
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:18px;margin-bottom:14px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:12px;">👤 Identité du partenaire</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;"><label style="font-size:11px;color:#94a3b8;">Nom / Prénom</label><input id="bc-ct" type="text" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:13px;color:#0f172a;outline:none;width:100%;"></div>
+        <div style="display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;"><label style="font-size:11px;color:#94a3b8;">Entreprise</label><input id="bc-co" type="text" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:13px;color:#0f172a;outline:none;width:100%;"></div>
+        <div style="display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;"><label style="font-size:11px;color:#94a3b8;">Email</label><input id="bc-email" type="email" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:13px;color:#0f172a;outline:none;width:100%;"></div>
+        <div style="display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;"><label style="font-size:11px;color:#94a3b8;">Téléphone</label><input id="bc-tel" type="tel" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:13px;color:#0f172a;outline:none;width:100%;"></div>
+        <div style="display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;"><label style="font-size:11px;color:#94a3b8;">SIRET</label><input id="bc-siret" type="text" placeholder="Ex : 123 456 789 00010" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:13px;color:#0f172a;outline:none;width:100%;"></div>
+      </div>
+    </div>
+    <div style="background:#eff6ff;border:1px solid rgba(37,99,235,0.2);border-radius:14px;padding:16px;margin-bottom:14px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:12px;">🌟 Offre souscrite</div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(37,99,235,0.1);"><span style="color:#64748b;">Secteur</span><strong id="bc-sector" style="color:#0f172a;"></strong></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(37,99,235,0.1);"><span style="color:#64748b;">Accès logiciel</span><strong style="color:#0f172a;">99 ans · Toutes mises à jour</strong></div>
+      <div style="font-size:11px;color:#64748b;padding:6px 0;border-bottom:1px solid rgba(37,99,235,0.1);">Fonctionnalité sur mesure :<br><input id="bc-fonc" type="text" placeholder="À définir ensemble..." style="width:100%;background:rgba(255,255,255,0.6);border:1px solid rgba(37,99,235,0.2);border-radius:6px;padding:6px 10px;font-size:12px;color:#0f172a;outline:none;margin-top:4px;"></div>
+      <div style="display:flex;justify-content:space-between;font-size:15px;padding:8px 0;margin-top:4px;"><span style="color:#0f172a;font-weight:700;">TOTAL TTC</span><strong id="bc-invest" style="color:#f97316;font-size:20px;"></strong></div>
+    </div>
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;margin-bottom:14px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:12px;">💳 Paiement</div>
+      <div style="background:#f0fdf4;border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:10px;margin-bottom:10px;font-size:12px;font-weight:700;color:#059669;">100% à la signature · Virement bancaire</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:grid;grid-template-columns:80px 1fr;gap:8px;align-items:center;"><label style="font-size:11px;color:#94a3b8;">IBAN</label><input id="bc-iban" type="text" placeholder="FR76 XXXX..." style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:12px;color:#0f172a;outline:none;width:100%;"></div>
+        <div style="display:grid;grid-template-columns:80px 1fr;gap:8px;align-items:center;"><label style="font-size:11px;color:#94a3b8;">BIC</label><input id="bc-bic" type="text" placeholder="Ex : BNPAFRPP" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:13px;color:#0f172a;outline:none;width:100%;"></div>
+        <div style="display:grid;grid-template-columns:80px 1fr;gap:8px;align-items:center;"><label style="font-size:11px;color:#94a3b8;">Banque</label><input id="bc-bank" type="text" placeholder="Ex : BNP Paribas" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:13px;color:#0f172a;outline:none;width:100%;"></div>
+      </div>
+    </div>
+    <div style="background:#fff7ed;border:1px solid rgba(249,115,22,0.2);border-radius:14px;padding:14px;margin-bottom:14px;font-size:11px;color:#334155;line-height:1.7;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#f97316;margin-bottom:8px;">⚖️ Conditions</div>
+      ✓ Accès logiciel garanti <strong>99 ans</strong><br>
+      ✓ En cas de non-livraison avant le <strong>31/12/2026</strong>, investissement intégralement restitué<br>
+      ✓ Fonctionnalité sur mesure développée d'un commun accord<br>
+      <div style="font-size:10px;color:#94a3b8;margin-top:6px;font-style:italic;">⚠️ Soumis à validation juridique — CGV définitives à venir</div>
+    </div>
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;margin-bottom:14px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:10px;">✍️ Signature</div>
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:8px;">Signez dans le cadre ci-dessous</div>
+      <canvas id="sig-canvas" width="340" height="130" style="border:2px dashed #e2e8f0;border-radius:10px;background:#f8fafc;width:100%;touch-action:none;display:block;"></canvas>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button onclick="clearSig()" style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:8px 16px;font-size:12px;color:#64748b;cursor:pointer;flex:1;">Effacer</button>
+        <button onclick="goToCode()" style="background:#f97316;color:white;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;flex:2;">Valider & envoyer le code →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S6 CODE DE VALIDATION -->
+<div id="s6" class="screen" style="background:#f8fafc;align-items:center;justify-content:center;padding:32px 20px;text-align:center;">
+  <div style="font-size:48px;margin-bottom:16px;">📱</div>
+  <div style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:8px;">Code de validation</div>
+  <p style="font-size:13px;color:#94a3b8;margin-bottom:6px;">Un code à 6 chiffres a été envoyé à</p>
+  <p style="font-size:14px;font-weight:700;color:#2563eb;margin-bottom:24px;" id="code-email-display"></p>
+  <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px;" id="code-inputs">
+    <input type="number" maxlength="1" style="width:44px;height:54px;border:2px solid #e2e8f0;border-radius:10px;text-align:center;font-size:22px;font-weight:700;color:#0f172a;background:#fff;outline:none;" oninput="codeInput(this,0)">
+    <input type="number" maxlength="1" style="width:44px;height:54px;border:2px solid #e2e8f0;border-radius:10px;text-align:center;font-size:22px;font-weight:700;color:#0f172a;background:#fff;outline:none;" oninput="codeInput(this,1)">
+    <input type="number" maxlength="1" style="width:44px;height:54px;border:2px solid #e2e8f0;border-radius:10px;text-align:center;font-size:22px;font-weight:700;color:#0f172a;background:#fff;outline:none;" oninput="codeInput(this,2)">
+    <input type="number" maxlength="1" style="width:44px;height:54px;border:2px solid #e2e8f0;border-radius:10px;text-align:center;font-size:22px;font-weight:700;color:#0f172a;background:#fff;outline:none;" oninput="codeInput(this,3)">
+    <input type="number" maxlength="1" style="width:44px;height:54px;border:2px solid #e2e8f0;border-radius:10px;text-align:center;font-size:22px;font-weight:700;color:#0f172a;background:#fff;outline:none;" oninput="codeInput(this,4)">
+    <input type="number" maxlength="1" style="width:44px;height:54px;border:2px solid #e2e8f0;border-radius:10px;text-align:center;font-size:22px;font-weight:700;color:#0f172a;background:#fff;outline:none;" oninput="codeInput(this,5)">
+  </div>
+  <div style="font-size:11px;color:#ef4444;margin-bottom:20px;" id="code-error"></div>
+  <button onclick="validateCode()" style="width:100%;max-width:340px;background:#2563eb;color:white;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:15px;border-radius:12px;border:none;cursor:pointer;margin-bottom:10px;">✓ Valider le bon de commande</button>
+  <button onclick="resendCode()" style="background:transparent;border:none;color:#2563eb;font-size:12px;cursor:pointer;text-decoration:underline;">Renvoyer le code</button>
+</div>
+
+<!-- S7 CONFIRMATION FINALE -->
+<div id="s7" class="screen" style="background:#f8fafc;align-items:center;justify-content:center;padding:32px 20px;text-align:center;">
+  <div style="font-size:64px;margin-bottom:16px;">🎉</div>
+  <div style="font-size:22px;font-weight:800;color:#0f172a;margin-bottom:8px;">Bon de commande signé !</div>
+  <p style="font-size:13px;color:#94a3b8;margin-bottom:20px;line-height:1.6;">Le document signé a été envoyé aux deux parties.</p>
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;width:100%;max-width:400px;text-align:left;margin-bottom:20px;" id="final-recap"></div>
+  <div style="background:#f0fdf4;border:1px solid rgba(16,185,129,0.2);border-radius:12px;padding:14px;width:100%;max-width:400px;margin-bottom:20px;font-size:12px;color:#059669;font-weight:700;">✓ Place partenaire pilote sécurisée — Frédéric vous recontactera sous 48h</div>
+  <button onclick="reset()" style="background:#2563eb;color:white;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:15px 32px;border-radius:50px;border:none;cursor:pointer;width:100%;max-width:400px;">Nouveau prospect →</button>
+</div>
+
+<script>
+const CA=["Moins de 50 K€","50 K – 100 K€","100 K – 200 K€","200 K – 500 K€","500 K – 1 M€","Plus de 1 M€"];
+const CA2=["Moins de 50 K€","50 K – 100 K€","100 K – 200 K€","200 K – 500 K€","500 K – 2 M€","2 M – 5 M€","Plus de 5 M€"];
+const SD={
+  ev:{n:"Espaces Verts",ic:"🌿",inv:15000,abo:7200,gm:4000,roi:"4–6",bench:[{l:"Temps admin/sem.",a:3,u:"h",k:"ta"},{l:"Imprévus/sem.",a:2.5,u:"x",k:"mo"},{l:"Stress /5",a:3.2,u:"",k:"st"}],qs:Q("ev","salariés","chantiers",CA)},
+  ni:{n:"Nettoyage Industriel",ic:"🧹",inv:25000,abo:36000,gm:12500,roi:"3–5",bench:[{l:"Temps coord/sem.",a:6,u:"h",k:"ta"},{l:"Imprévus/sem.",a:3,u:"x",k:"mo"},{l:"Stress /5",a:3.8,u:"",k:"st"}],qs:Q("ni","agents","contrats",CA2)},
+  ci:{n:"Cabinet Infirmier",ic:"🩺",inv:5000,abo:1800,gm:675,roi:"7–8",bench:[{l:"Remplacements/sem.",a:8,u:"x",k:"mo"},{l:"Temps coord/sem.",a:2,u:"h",k:"ta"},{l:"Charge mentale /5",a:3.5,u:"",k:"st"}],qs:Q("ci","infirmiers","tournées",CA)},
+  amb:{n:"Ambulances / VSL",ic:"🚑",inv:10000,abo:3600,gm:2300,roi:"4–6",bench:[{l:"Temps régul./jour",a:2.5,u:"h",k:"ta"},{l:"Remplacements/sem.",a:3,u:"x",k:"mo"},{l:"Stress /5",a:4,u:"",k:"st"}],qs:Q("amb","équipages","missions",CA)},
+  ram:{n:"Ramonage / Dépannage",ic:"🔧",inv:5000,abo:1080,gm:700,roi:"7–9",bench:[{l:"Temps admin/sem.",a:2,u:"h",k:"ta"},{l:"Imprévus/sem.",a:2,u:"x",k:"mo"},{l:"Stress /5",a:2.8,u:"",k:"st"}],qs:Q("ram","techniciens","interventions",CA)},
+  lv:{n:"Livraison de Boissons",ic:"🍺",inv:25000,abo:18000,gm:8200,roi:"3–5",bench:[{l:"Temps planif./jour",a:2,u:"h",k:"ta"},{l:"Perturbations/sem.",a:3,u:"x",k:"mo"},{l:"Stress /5",a:3.5,u:"",k:"st"}],qs:Q("lv","chauffeurs","tournées",CA2)},
+  ag:{n:"Entretien Agricole",ic:"🚜",inv:8000,abo:2880,gm:1060,roi:"7–9",bench:[{l:"Temps admin/sem.",a:2.5,u:"h",k:"ta"},{l:"Urgences/sem.",a:2.5,u:"x",k:"mo"},{l:"Stress pointe /5",a:4.2,u:"",k:"st"}],qs:Q("ag","techniciens","interventions",CA)},
+  autre:{n:"Autre métier",ic:"🔍",inv:10000,abo:3600,gm:2000,roi:"5–8",bench:[{l:"Temps admin/sem.",a:3,u:"h",k:"ta"},{l:"Imprévus/sem.",a:2.5,u:"x",k:"mo"},{l:"Stress /5",a:3.5,u:"",k:"st"}],qs:Q("autre","collaborateurs","missions",CA)}
+};
+function Q(s,col,act,ca){return[
+  {b:1,bn:"L'entreprise",t:"multi",k:"ns",q:"Combien avez-vous de "+col+" ?",o:["1 à 3","4 à 10","11 à 20","21 à 50","Plus de 50"]},
+  {b:1,bn:"L'entreprise",t:"multi",k:"ca",q:"Chiffre d'affaires annuel ?",o:ca},
+  {b:2,bn:"Organisation",t:"multi",k:"meth",q:"Comment planifiez-vous vos "+act+" ?",o:["De tête / habitude","Papier / carnet","Excel / tableur","Logiciel dédié","WhatsApp / SMS","Autre"]},
+  {b:2,bn:"Organisation",t:"multi",k:"qui",q:"Qui est responsable de la planification ?",o:["Gérant / dirigeant","Directeur exploitation","Responsable dédié","Secrétaire / administratif","Chacun son agenda","Autre"]},
+  {b:2,bn:"Organisation",t:"scale",k:"ta",q:"Temps perdu par semaine en coordination ?",o:["30m","1h","2h","3h","5h","7h+"]},
+  {b:2,bn:"Organisation",t:"multi",k:"trans",q:"Comment vos "+col+" reçoivent-ils leurs missions ?",o:["Briefing oral","Appel téléphonique","SMS / WhatsApp","Fiche papier","App mobile","Par oral sans support","Autonomes","Autre"]},
+  {b:3,bn:"Points de douleur",t:"scale",k:"mo",q:"Combien de fois par semaine gérez-vous un imprévu majeur ?",o:["Rarement","2-3 fois","4 fois+","Tous les jours"]},
+  {b:3,bn:"Points de douleur",t:"multi",k:"pb",q:"Quels sont vos principaux problèmes opérationnels ?",o:["Gestion absences","Planning trop long","Matériel mal géré","Tournées non optimisées","Rentabilité inconnue","Stress quotidien","Suivi client insuffisant","Autre"]},
+  {b:3,bn:"Points de douleur",t:"scale",k:"st",q:"Niveau de stress lié à l'organisation, sur 5 ?",o:["1","2","3","4","5"]},
+  {b:4,bn:"Attentes",t:"text",k:"pri",q:"Si vous pouviez changer UNE chose demain matin, ce serait quoi ?"},
+  {b:4,bn:"Attentes",t:"multi",k:"num",q:"Vos équipes sont-elles à l'aise avec le numérique ?",o:["Très à l'aise","Moyennement","Peu à l'aise","Autre"]},
+  {b:4,bn:"Attentes",t:"text",k:"fm",q:"Une fonctionnalité spécifique serait-elle utile pour votre activité ?"},
+  {b:4,bn:"Attentes",t:"multi",k:"dec",q:"Êtes-vous décisionnaire pour ce type d'investissement ?",o:["Oui, seul","Oui, avec associé","Non, en référer à quelqu'un"]}
+];}
+
+let ST={sec:null,co:"",ct:"",qi:0,ans:{}};
+let scanStream=null;
+
+// ── NAVIGATION S0 ──
+function pick(btn){
+  document.querySelectorAll(".sector-btn").forEach(b=>b.classList.remove("selected"));
+  btn.classList.add("selected");
+  ST.sec=btn.dataset.sector;
+  // Afficher/masquer champ autre métier
+  const autreGroup=document.getElementById("autre-metier-group");
+  if(ST.sec==="autre"){
+    autreGroup.style.display="block";
+    document.getElementById("btn-start").disabled=true;
+  } else {
+    autreGroup.style.display="none";
+    document.getElementById("btn-start").disabled=false;
+  }
+}
+
+const METIERS_LISTE = [
+  "Aide à domicile","Ambulance / VSL","Animalerie","Architecture","Assurance",
+  "Auto-école","Boulangerie","Boucherie","Cabinet dentaire","Cabinet infirmier",
+  "Cabinet kiné","Cabinet médical","Cabinet vétérinaire","Carrosserie","Charpente",
+  "Chauffage / Climatisation","Chaudronnerie","Coiffure","Comptabilité","Construction",
+  "Dépannage informatique","Électricité","Entretien agricole","Entretien espaces verts",
+  "Entretien piscines","Épicerie","Fleuriste","Garde d'enfants","Imprimerie",
+  "Installation alarme","Installation solaire","Isolation","Lavage auto","Livraison boissons",
+  "Livraison colis","Maçonnerie","Maintenance industrielle","Menuiserie","Motoculture",
+  "Nettoyage industriel","Nettoyage vitres","Optique","Peinture bâtiment","Pharmacie",
+  "Photographie","Plomberie","Portage repas","Ramonage","Réparation électroménager",
+  "Réparation téléphones","Restauration","Sécurité","Serrurerie","Taxi",
+  "Terrassement","Toiture","Transport sanitaire","Travaux publics","Traiteur"
+];
+
+function filterMetiers(val){
+  const box=document.getElementById("metier-suggestions");
+  if(!val||val.length<2){box.style.display="none";return;}
+  const matches=METIERS_LISTE.filter(m=>m.toLowerCase().includes(val.toLowerCase()));
+  if(matches.length===0){box.style.display="none";return;}
+  box.innerHTML=matches.map(m=>`<div onclick="selectMetier('${m}')" style="padding:10px 14px;font-size:13px;color:#334155;cursor:pointer;border-bottom:1px solid #f1f5f9;" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background=''">${m}</div>`).join("");
+  box.style.display="block";
+}
+
+function selectMetier(val){
+  document.getElementById("inp-autre-metier").value=val;
+  document.getElementById("metier-suggestions").style.display="none";
+  ST.autreMetier=val;
+  document.getElementById("btn-start").disabled=false;
+}
+function goToContact(){
+  if(!ST.sec)return;
+  const s=SD[ST.sec];
+  let label=s.ic+" "+s.n;
+  if(ST.sec==="autre"&&ST.autreMetier){
+    label="🔍 "+ST.autreMetier;
+    ST.autreMetierNom=ST.autreMetier;
+  }
+  document.getElementById("s0b-sector-label").textContent=label;
+  show("s0b");
+}
+function chkContact(){
+  const ok=document.getElementById("inp-ct").value.trim()&&document.getElementById("inp-co").value.trim();
+  document.getElementById("btn-next-s0b").disabled=!ok;
+}
+function startQuestions(){
+  ST.co=document.getElementById("inp-co").value.trim();
+  ST.ct=document.getElementById("inp-ct").value.trim();
+  // Pré-remplir email S3 si saisi en S0b
+  const em=document.getElementById("inp-email-contact").value.trim();
+  if(em)document.getElementById("inp-email").value=em;
+  ST.qi=0;ST.ans={};
+  show("s1");rQ();
+}
+
+// ── SCAN CARTE DE VISITE ──
+function openScan(){
+  const modal=document.getElementById("scan-modal");
+  const video=document.getElementById("scan-video");
+  // Contraintes caméra : arrière de préférence, haute résolution
+  const constraints={video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1080}}};
+  navigator.mediaDevices.getUserMedia(constraints)
+    .then(function(stream){
+      scanStream=stream;
+      video.srcObject=stream;
+      modal.classList.add("active");
+    })
+    .catch(function(err){
+      alert("Caméra non disponible : "+err.message+"\nSaisissez manuellement.");
+    });
+}
+function closeScan(){
+  if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}
+  document.getElementById("scan-modal").classList.remove("active");
+}
+function captureCard(){
+  const video=document.getElementById("scan-video");
+  const canvas=document.getElementById("scan-canvas");
+  canvas.width=video.videoWidth;
+  canvas.height=video.videoHeight;
+  canvas.getContext("2d").drawImage(video,0,0);
+  closeScan();
+  // Afficher indicateur
+  document.getElementById("scan-processing").classList.add("active");
+  // Appel API Claude Vision pour OCR
+  canvas.toBlob(function(blob){
+    const reader=new FileReader();
+    reader.onload=function(e){
+      const b64=e.target.result.split(",")[1];
+      callClaudeVision(b64);
+    };
+    reader.readAsDataURL(blob);
+  },"image/jpeg",0.9);
+}
+function callClaudeVision(imageB64){
+  fetch("https://api.anthropic.com/v1/messages",{
+    headers:{"Content-Type":"application/json","x-api-key":"CLE_API_SUPPRIMEE","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:500,
+      messages:[{
+        role:"user",
+        content:[
+          {type:"image",source:{type:"base64",media_type:"image/jpeg",data:imageB64}},
+          {type:"text",text:"Tu es un lecteur de cartes de visite. Extrais les informations de cette carte et réponds UNIQUEMENT en JSON sans aucun texte autour, avec ce format exact : {\"nom\":\"...\",\"entreprise\":\"...\",\"email\":\"...\",\"telephone\":\"...\",\"adresse\":\"...\"}. Si un champ est absent mets \"\"."}
+        ]
+      }]
+    })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    document.getElementById("scan-processing").classList.remove("active");
+    try{
+      const txt=data.content[0].text.trim();
+      const info=JSON.parse(txt);
+      fillFromScan(info);
+    }catch(e){
+      alert("Lecture difficile. Vérifiez l'éclairage et réessayez, ou saisissez manuellement.");
+    }
+  })
+  .catch(()=>{
+    document.getElementById("scan-processing").classList.remove("active");
+    alert("Erreur de connexion. Saisissez manuellement.");
+  });
+}
+function fillFromScan(info){
+  if(info.nom){document.getElementById("inp-ct").value=info.nom;document.getElementById("inp-ct").classList.add("filled");}
+  if(info.entreprise){document.getElementById("inp-co").value=info.entreprise;document.getElementById("inp-co").classList.add("filled");}
+  if(info.email){document.getElementById("inp-email-contact").value=info.email;document.getElementById("inp-email-contact").classList.add("filled");}
+  if(info.telephone){document.getElementById("inp-tel").value=info.telephone;document.getElementById("inp-tel").classList.add("filled");}
+  if(info.adresse){document.getElementById("inp-addr").value=info.adresse;document.getElementById("inp-addr").classList.add("filled");}
+  // Afficher résumé
+  const box=document.getElementById("scan-result-box");
+  const txt=document.getElementById("scan-result-txt");
+  let lines=[];
+  if(info.nom)lines.push("👤 "+info.nom);
+  if(info.entreprise)lines.push("🏢 "+info.entreprise);
+  if(info.email)lines.push("📧 "+info.email);
+  if(info.telephone)lines.push("📞 "+info.telephone);
+  txt.innerHTML=lines.join("<br>");
+  box.classList.add("active");
+  chkContact();
+}
+
+// ── GÉOLOCALISATION ──
+document.getElementById("btn-geo").addEventListener("click",function(){
+  var btn=this;
+  if(!navigator.geolocation){alert("Géolocalisation non disponible.");return;}
+  btn.textContent="⏳";
+  navigator.geolocation.getCurrentPosition(
+    function(pos){
+      var lat=pos.coords.latitude.toFixed(5);
+      var lng=pos.coords.longitude.toFixed(5);
+      fetch("https://nominatim.openstreetmap.org/reverse?format=json&lat="+lat+"&lon="+lng)
+        .then(r=>r.json())
+        .then(data=>{document.getElementById("inp-addr").value=data.display_name||("Lat:"+lat+" Lng:"+lng);btn.textContent="📍";})
+        .catch(()=>{document.getElementById("inp-addr").value="Lat:"+lat+" / Lng:"+lng;btn.textContent="📍";});
+    },
+    function(){btn.textContent="📍";alert("Position non disponible. Saisissez manuellement.");}
+  );
+});
+
+// ── QUESTIONS ──
+function rQ(){
+  const qs=SD[ST.sec].qs,q=qs[ST.qi],tot=qs.length;
+  document.getElementById("pbar").style.width=((ST.qi+1)/tot*100)+"%";
+  document.getElementById("q-info").textContent="Q "+(ST.qi+1)+"/"+tot;
+  document.getElementById("bloc-info").textContent="Bloc "+q.b+" — "+q.bn;
+  document.getElementById("bprev").style.display=ST.qi>0?"block":"none";
+  document.getElementById("bnext").textContent=ST.qi===tot-1?"Voir les résultats →":"Suivant →";
+  const sv=ST.ans[q.k];
+  let h=`<div class="bloc-tag">${q.bn}</div><div class="q-card"><div class="q-num">Question ${ST.qi+1} sur ${tot}</div><div class="q-title">${q.q}</div>`;
+  if(q.t==="multi"){h+='<div class="opts">';q.o.forEach(o=>{const s=sv&&sv.includes(o)?"sel":"";h+=`<div class="opt ${s}" onclick="tog(this,'${q.k}','${o.replace(/'/g,"\\'")}')"><div class="opt-chk">${s?"✓":""}</div><div class="opt-lbl">${o}</div></div>`;});h+="</div>";}
+  else if(q.t==="scale"){h+='<div class="scale-opts">';q.o.forEach(o=>{const s=sv===o?"sel":"";h+=`<div class="scale-opt ${s}" onclick="psc(this,'${q.k}','${o}')">${o}</div>`;});h+="</div>";}
+  else{h+=`<textarea class="txt-area" id="ta-${q.k}" onchange="ST.ans['${q.k}']=this.value">${sv||""}</textarea>`;}
+  h+="</div>";
+  const el=document.getElementById("qscroll");el.innerHTML=h;el.scrollTop=0;
+}
+function tog(el,k,v){el.classList.toggle("sel");el.querySelector(".opt-chk").textContent=el.classList.contains("sel")?"✓":"";if(!ST.ans[k])ST.ans[k]=[];const i=ST.ans[k].indexOf(v);if(i===-1)ST.ans[k].push(v);else ST.ans[k].splice(i,1);}
+function psc(el,k,v){document.querySelectorAll("#qscroll .scale-opt").forEach(e=>e.classList.remove("sel"));el.classList.add("sel");ST.ans[k]=v;}
+function nextQ(){const qs=SD[ST.sec].qs,q=qs[ST.qi];if(q.t==="text"){const t=document.getElementById("ta-"+q.k);if(t)ST.ans[q.k]=t.value;}if(ST.qi<qs.length-1){ST.qi++;rQ();}else{buildROI();}}
+function prevQ(){if(ST.qi>0){ST.qi--;rQ();}}
+function goBack(){if(ST.qi===0)show("s0b");else{ST.qi--;rQ();}}
+
+// ── ROI ──
+function buildROI(){
+  const s=SD[ST.sec],a=ST.ans;
+  const tm={"30m":0.5,"1h":1,"2h":2,"3h":3,"5h":5,"7h+":7};
+  const mm={"Rarement":1,"2-3 fois":2.5,"4 fois+":4,"Tous les jours":5};
+  const sm={"1":1,"2":2,"3":3,"4":4,"5":5};
+  const tv=tm[a.ta]||3,mv=mm[a.mo]||2.5,sv=sm[a.st]||3;
+  s.bench.forEach(b=>{if(b.k==="ta")b.p=tv;else if(b.k==="mo")b.p=mv;else b.p=sv;});
+  const ga=s.gm*12,ta=ga+s.abo,g5=ta*5-s.inv;
+  const is=Math.round(s.gm*10/1000)*1000,im=Math.round(s.gm*6/500)*500;
+  let pm="";
+  if(sv>=4)pm=`Avec un stress de <strong>${sv}/5</strong> (moy. secteur : ${s.bench.find(b=>b.k==="st").a}/5), votre organisation vous coûte plus que la moyenne. PLANEQUIPE peut changer ça dès le premier mois.`;
+  else if(sv<=2)pm=`Votre stress est en dessous de la moyenne du secteur — mais vos chiffres montrent encore un fort potentiel d'optimisation.`;
+  else pm=`Votre profil est représentatif du secteur. PLANEQUIPE réduit le temps de coordination de 60 à 80% en moyenne.`;
+  const bh=s.bench.map(b=>{const mx=b.u===""?5:8,pp=Math.min((b.p/mx)*100,100),ap=Math.min((b.a/mx)*100,100);const ab=b.p>b.a,col=ab?"var(--orange)":"var(--blue)";return `<div class="bench-row"><div class="bench-lbl">${b.l}</div><div class="bench-track"><div class="bench-avg-mark" style="left:${ap}%"></div><div class="bench-fill" style="width:${pp}%;background:${col};"></div></div><span class="bench-val" style="color:${col};">${b.p}${b.u}</span></div><div class="bench-avg-note">Moy. : ${b.a}${b.u}</div>`;}).join("");
+  document.getElementById("roi-content").innerHTML=`<div class="roi-hdr"><div class="roi-company">${ST.co} · ${ST.ct}</div><div class="roi-title">Votre synthèse personnalisée</div><span class="sector-pill">${s.ic} ${s.n}</span></div><div class="roi-grid"><div class="roi-c main"><span class="roi-v">${s.gm.toLocaleString("fr")}</span><span class="roi-u">EUR / mois</span><span class="roi-l">Économies mensuelles estimées</span></div><div class="roi-c"><span class="roi-v">${s.roi}</span><span class="roi-u" style="color:var(--blue);">mois</span><span class="roi-l">Délai retour sur investissement</span></div><div class="roi-c"><span class="roi-v" style="color:var(--green);">${ta.toLocaleString("fr")}</span><span class="roi-u" style="color:var(--green);">EUR / an</span><span class="roi-l">Valeur totale annuelle</span></div><div class="roi-c orng"><span class="roi-v">${g5.toLocaleString("fr")}</span><span class="roi-u">EUR</span><span class="roi-l">Gain cumulé sur 5 ans</span></div></div><div class="invest-box"><div class="invest-icon">💡</div><div class="invest-txt"><p>Basé sur vos chiffres, un investissement entre <strong>${im.toLocaleString("fr")} et ${is.toLocaleString("fr")} EUR</strong> serait amorti en moins d'un an.</p><small>Calcul basé sur vos économies mensuelles estimées × 6 à 10 mois</small></div></div><div class="bench-box"><div class="bench-title">📊 Votre position vs la moyenne du secteur</div>${bh}</div><div class="position-box"><div style="font-size:20px;flex-shrink:0;">💡</div><div class="position-txt">${pm}</div></div><div class="offer-box"><div class="offer-title">🌟 Offre Partenaire Pilote</div><div class="offer-items"><div class="offer-item"><span class="offer-chk">✓</span> Accès 99 ans — aucun abonnement futur</div><div class="offer-item"><span class="offer-chk">✓</span> Toutes les mises à jour incluses à vie</div><div class="offer-item"><span class="offer-chk">✓</span> 1 fonctionnalité sur mesure validée ensemble</div><div class="offer-item"><span class="offer-chk">✓</span> Accompagnement prioritaire phase pilote</div><div class="offer-item"><span class="offer-chk">✓</span> 6 places disponibles en France — non renouvelables</div></div><span class="offer-price">${s.inv.toLocaleString("fr")} EUR</span><div class="offer-price-sub">Investissement unique · Valeur marché : ${s.abo.toLocaleString("fr")} EUR/an</div></div><button class="btn-sign" onclick="openBC()">✍ Sécuriser ma place — Signer le bon de commande</button><button class="btn-email" onclick="show('s3')">📨 Envoyer la synthèse par email</button><button class="btn-back-q" onclick="show('s1');rQ()">← Revoir les réponses</button><div style="height:24px;"></div>`;
+  show("s2");
+}
+
+// ── EMAIL ──
+function buildEmailPreview(){
+  var s=SD[ST.sec];if(!s)return;
+  var ga=s.gm*12,ta=ga+s.abo,g5=ta*5-s.inv;
+  var prenom=ST.ct.split(" ")[0]||ST.ct;
+  document.getElementById("email-preview-content").innerHTML="<div style='border-bottom:3px solid #2563eb;padding-bottom:8px;margin-bottom:10px;'><strong style='font-size:14px;letter-spacing:2px;color:#0f172a;'>◆ PLANEQUIPE</strong><span style='background:#f97316;color:white;font-size:8px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px;'>LUCKY</span></div>"+"<div style='margin-bottom:8px;'>Bonjour <strong>"+prenom+"</strong>,</div>"+"<div style='font-size:12px;margin-bottom:10px;'>Suite à notre échange, voici votre synthèse pour <strong>"+ST.co+"</strong>.</div>"+"<div style='background:#eff6ff;border-left:3px solid #2563eb;border-radius:0 8px 8px 0;padding:10px;margin-bottom:8px;'>"+"<div style='font-size:9px;font-weight:700;letter-spacing:2px;color:#2563eb;margin-bottom:6px;'>📊 SYNTHÈSE ROI — "+s.ic+" "+s.n+"</div>"+"<div style='display:flex;justify-content:space-between;font-size:12px;padding:3px 0;'><span style='color:#94a3b8;'>Économies/mois</span><strong style='color:#2563eb;'>"+s.gm.toLocaleString("fr")+" EUR</strong></div>"+"<div style='display:flex;justify-content:space-between;font-size:12px;padding:3px 0;'><span style='color:#94a3b8;'>Gain 5 ans</span><strong style='color:#f97316;'>"+g5.toLocaleString("fr")+" EUR</strong></div>"+"<div style='display:flex;justify-content:space-between;font-size:12px;padding:3px 0;'><span style='color:#94a3b8;'>Délai ROI</span><strong style='color:#2563eb;'>"+s.roi+" mois</strong></div></div>"+"<div style='background:#f97316;color:white;font-size:11px;font-weight:700;text-transform:uppercase;padding:10px;border-radius:8px;text-align:center;margin-bottom:8px;'>→ Sécuriser ma place partenaire pilote</div>"+"<div style='font-size:11px;color:#334155;border-top:1px solid #e2e8f0;padding-top:8px;'>Frédéric Le Lez · LL Solutions Conseils<br>planequipef@gmail.com · 06 37 57 59 92</div>";
+}
+function doSend(){const s=SD[ST.sec];document.getElementById("crecap").innerHTML=recap(document.getElementById("inp-email").value||"—",document.getElementById("inp-date").value||"—",document.getElementById("inp-time").value||"—",document.getElementById("inp-note").value,s);show("s4");}
+function doSkip(){const s=SD[ST.sec];document.getElementById("csub").textContent="Entretien enregistré. Pensez à planifier votre relance.";document.getElementById("crecap").innerHTML=recap("—","—","—","",s);show("s4");}
+function recap(email,date,time,note,s){return `<div class="recap-row"><span class="recap-lbl">Entreprise</span><span class="recap-val">${ST.co}</span></div><div class="recap-row"><span class="recap-lbl">Contact</span><span class="recap-val">${ST.ct}</span></div><div class="recap-row"><span class="recap-lbl">Secteur</span><span class="recap-val">${s.ic} ${s.n}</span></div><div class="recap-row"><span class="recap-lbl">Investissement</span><span class="recap-val">${s.inv.toLocaleString("fr")} EUR</span></div><div class="recap-row"><span class="recap-lbl">Économies/mois</span><span class="recap-val">${s.gm.toLocaleString("fr")} EUR</span></div><div class="recap-row"><span class="recap-lbl">Email</span><span class="recap-val">${email}</span></div><div class="recap-row"><span class="recap-lbl">Rappel</span><span class="recap-val">${date} ${time!=="—"?"à "+time:""}</span></div>${note?`<div class="recap-row"><span class="recap-lbl">Note</span><span class="recap-val">${note}</span></div>`:""}`;}
+
+// ── BON DE COMMANDE ──
+function openBC(){
+  var s=SD[ST.sec];if(!s)return;
+  var now=new Date();
+  var num="BC-"+now.getFullYear()+("0"+(now.getMonth()+1)).slice(-2)+("0"+now.getDate()).slice(-2)+"-"+Math.floor(Math.random()*1000);
+  document.getElementById("bc-date").textContent=now.toLocaleDateString("fr-FR")+" · N°"+num;
+  document.getElementById("bc-ct").value=ST.ct||"";
+  document.getElementById("bc-co").value=ST.co||"";
+  document.getElementById("bc-email").value=document.getElementById("inp-email").value||document.getElementById("inp-email-contact").value||"";
+  document.getElementById("bc-tel").value=document.getElementById("inp-tel").value||"";
+  document.getElementById("bc-sector").textContent=s.ic+" "+s.n;
+  document.getElementById("bc-invest").textContent=s.inv.toLocaleString("fr")+" EUR";
+  initCanvas();show("s5");
+}
+
+// ── SIGNATURE ──
+var canvas,ctx,drawing=false,hasSig=false;
+function initCanvas(){canvas=document.getElementById("sig-canvas");ctx=canvas.getContext("2d");ctx.clearRect(0,0,canvas.width,canvas.height);ctx.strokeStyle="#0f172a";ctx.lineWidth=2.5;ctx.lineCap="round";ctx.lineJoin="round";hasSig=false;function getPos(e,isTouch){var r=canvas.getBoundingClientRect();var sx=canvas.width/r.width,sy=canvas.height/r.height;var src=isTouch?e.touches[0]:e;return{x:(src.clientX-r.left)*sx,y:(src.clientY-r.top)*sy};}canvas.addEventListener("touchstart",function(e){e.preventDefault();drawing=true;var p=getPos(e,true);ctx.beginPath();ctx.moveTo(p.x,p.y);},{passive:false});canvas.addEventListener("touchmove",function(e){e.preventDefault();if(!drawing)return;var p=getPos(e,true);ctx.lineTo(p.x,p.y);ctx.stroke();hasSig=true;},{passive:false});canvas.addEventListener("touchend",function(){drawing=false;});canvas.addEventListener("mousedown",function(e){drawing=true;var p=getPos(e,false);ctx.beginPath();ctx.moveTo(p.x,p.y);});canvas.addEventListener("mousemove",function(e){if(!drawing)return;var p=getPos(e,false);ctx.lineTo(p.x,p.y);ctx.stroke();hasSig=true;});canvas.addEventListener("mouseup",function(){drawing=false;});}
+function clearSig(){if(ctx)ctx.clearRect(0,0,canvas.width,canvas.height);hasSig=false;}
+
+// ── CODE VALIDATION ──
+var _validationCode=null;
+function goToCode(){if(!hasSig){alert("Veuillez signer avant de continuer.");return;}var email=document.getElementById("bc-email").value.trim();if(!email){alert("Veuillez saisir l'email du prospect.");return;}_validationCode=Math.floor(100000+Math.random()*900000).toString();document.getElementById("code-email-display").textContent=email;document.querySelectorAll("#code-inputs input").forEach(function(i){i.value="";});document.getElementById("code-error").textContent="";alert("Code envoyé à "+email+"\n\nCode : "+_validationCode+"\n(En production, envoyé par email automatiquement)");show("s6");}
+function codeInput(el,idx){if(el.value.length>1)el.value=el.value.slice(-1);var inputs=document.querySelectorAll("#code-inputs input");if(el.value&&idx<5)inputs[idx+1].focus();}
+function validateCode(){var inputs=document.querySelectorAll("#code-inputs input");var entered=Array.from(inputs).map(function(i){return i.value;}).join("");if(entered.length<6){document.getElementById("code-error").textContent="Veuillez saisir les 6 chiffres.";return;}if(entered!==_validationCode){document.getElementById("code-error").textContent="Code incorrect. Réessayez.";return;}buildFinalRecap();show("s7");}
+function resendCode(){_validationCode=Math.floor(100000+Math.random()*900000).toString();var email=document.getElementById("bc-email").value;alert("Nouveau code : "+_validationCode);}
+function buildFinalRecap(){var s=SD[ST.sec];var now=new Date();document.getElementById("final-recap").innerHTML="<div style='display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #f1f5f9;'><span style='color:#94a3b8;'>Partenaire</span><strong>"+document.getElementById("bc-ct").value+"</strong></div>"+"<div style='display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #f1f5f9;'><span style='color:#94a3b8;'>Entreprise</span><strong>"+document.getElementById("bc-co").value+"</strong></div>"+"<div style='display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #f1f5f9;'><span style='color:#94a3b8;'>Secteur</span><strong>"+s.ic+" "+s.n+"</strong></div>"+"<div style='display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #f1f5f9;'><span style='color:#94a3b8;'>Montant</span><strong style='color:#f97316;font-size:15px;'>"+s.inv.toLocaleString("fr")+" EUR</strong></div>"+"<div style='display:flex;justify-content:space-between;font-size:12px;padding:5px 0;'><span style='color:#94a3b8;'>Authentifié</span><strong style='color:#10b981;'>✓ Code validé — "+now.toLocaleDateString("fr-FR")+"</strong></div>";}
+
+// ── UTILITAIRES ──
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo(0,0);if(id==="s3")buildEmailPreview();if(id==="s2")sendToSheets();}
+
+// ── COLLECTE ANONYME GOOGLE SHEETS ──
+const SHEETS_URL="https://script.google.com/macros/s/AKfycbztsloA2mUzSGQLZcFtEsY94XhdwT0mEjyGfnLt_DPPtSeI6_ZrK7saW5dw_OiOl9TtJA/exec";
+function sendToSheets(){
+  const a=ST.ans;
+  const s=SD[ST.sec];
+  const secteurNom=ST.sec==="autre"?(ST.autreMetierNom||"Autre"):s.n;
+  const data={
+    secteur:secteurNom,
+    nb_salaries:Array.isArray(a.ns)?a.ns.join(", "):a.ns||"",
+    ca:Array.isArray(a.ca)?a.ca.join(", "):a.ca||"",
+    methode_planning:Array.isArray(a.meth)?a.meth.join(", "):a.meth||"",
+    temps_admin:a.ta||"",
+    "imprévus":a.mo||"",
+    stress:a.st||"",
+    problemes:Array.isArray(a.pb)?a.pb.join(", "):a.pb||"",
+    numerique:Array.isArray(a.num)?a.num.join(", "):a.num||"",
+    decideur:Array.isArray(a.dec)?a.dec.join(", "):a.dec||""
+  };
+  fetch(SHEETS_URL,{method:"POST",body:JSON.stringify(data),mode:"no-cors"}).catch(()=>{});
+}
+function reset(){
+  ST={sec:null,co:"",ct:"",qi:0,ans:{}};
+  document.querySelectorAll(".sector-btn").forEach(b=>b.classList.remove("selected"));
+  document.querySelectorAll(".field-input").forEach(i=>{i.value="";i.classList.remove("filled");});
+  document.getElementById("btn-start").disabled=true;
+  document.getElementById("btn-next-s0b").disabled=true;
+  document.getElementById("scan-result-box").classList.remove("active");
+  document.getElementById("csub").textContent="La synthèse a été envoyée et le rappel est planifié.";
+  const d=new Date();d.setDate(d.getDate()+7);
+  document.getElementById("inp-date").value=d.toISOString().split("T")[0];
+  show("s0");
+}
+const d=new Date();d.setDate(d.getDate()+7);
+document.getElementById("inp-date").value=d.toISOString().split("T")[0];
+</script>
+</body>
+</html>
