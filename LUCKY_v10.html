@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-title" content="Lucky">
 <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzBkMWYzYyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3R5bGU9InN0b3AtY29sb3I6IzFlM2E2ZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwYTE2MjgiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTEwIiByeT0iMTEwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDx0ZXh0IHg9IjI1NiIgeT0iMzAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwgQmxhY2siIGZvbnQtc2l6ZT0iMjAwIiBmaWxsPSIjZmNkMzRkIj7inKY8L3RleHQ+Cjwvc3ZnPgo=">
 <title>Lucky — PLANEQUIPE</title>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script>emailjs.init("wDC2MRPJJJl0XFWHu");</script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init({publicKey: "wDC2MRPJJJl0XFWHu"});</script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.1/tesseract.min.js'></script>
 <style>
 :root {
@@ -477,12 +477,13 @@ const METIERS_LISTE = [
 
 function filterMetiers(val){
   const box=document.getElementById("metier-suggestions");
-  // Activer le bouton dès que l'utilisateur a saisi au moins 2 caractères
+  // Saisie libre : activer le bouton dès 2 caractères
   if(val&&val.length>=2){
     ST.autreMetier=val;
-    document.getElementById("btn-next-s0b").disabled=false;
+    document.getElementById("btn-start").disabled=false;
   } else {
-    document.getElementById("btn-next-s0b").disabled=true;
+    ST.autreMetier="";
+    document.getElementById("btn-start").disabled=true;
   }
   if(!val||val.length<2){box.style.display="none";return;}
   const matches=METIERS_LISTE.filter(m=>m.toLowerCase().includes(val.toLowerCase()));
