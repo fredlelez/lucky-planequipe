@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lucky Commercial">
+<title>Lucky Commercial v2 — PLANEQUIPE</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init({publicKey: "wDC2MRPJJJI0XFWHu"});</script>
+<style>
+:root{
+  --bg:#f8fafc; --surface:#ffffff; --surface2:#f1f5f9; --border:#e2e8f0;
+  --blue:#2563eb; --blue-pale:#eff6ff; --orange:#f97316; --orange-pale:#fff7ed;
+  --dark:#0f172a; --text:#334155; --muted:#94a3b8; --green:#10b981; --red:#e0564b;
+  --c1:#1B3A5C; --c2:#4A9BD4; --c3:#F77F00; --c4:#7E57C2; --c5:#26A69A;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.screen{display:none;min-height:100vh;flex-direction:column;}
+.screen.active{display:flex;}
+
+/* S0 ACCUEIL */
+#s0{background:var(--bg);align-items:center;justify-content:center;padding:32px 20px;text-align:center;}
+.logo-name{font-size:26px;font-weight:800;letter-spacing:4px;color:var(--dark);text-transform:uppercase;}
+.lucky-pill{display:inline-block;background:var(--orange);color:white;font-size:10px;font-weight:700;letter-spacing:3px;padding:4px 14px;border-radius:20px;margin-top:6px;margin-bottom:8px;}
+.mode-pill{display:inline-block;background:var(--c1);color:white;font-size:9px;font-weight:700;letter-spacing:2px;padding:3px 12px;border-radius:20px;margin-bottom:22px;}
+.welcome-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:6px;}
+.welcome-sub{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;max-width:380px;}
+.form-card{width:100%;max-width:420px;text-align:left;}
+.field-group{width:100%;margin-bottom:12px;}
+.field-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;}
+.field-input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--dark);font-size:14px;outline:none;transition:border-color 0.2s;}
+.field-input:focus{border-color:var(--blue);}
+.sector-mini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.sm-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 8px;cursor:pointer;text-align:center;font-size:11px;font-weight:600;color:var(--text);transition:all 0.15s;}
+.sm-btn.sel{border-color:var(--blue);background:var(--blue-pale);color:var(--blue);}
+.btn-start{width:100%;max-width:420px;background:var(--blue);color:white;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:15px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(37,99,235,0.25);margin-top:14px;}
+.btn-start:disabled{opacity:0.35;cursor:not-allowed;box-shadow:none;}
+
+/* S1 QUESTIONS */
+#s1{background:var(--bg);}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;}
+.back-btn{width:34px;height:34px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;flex-shrink:0;}
+.progress-wrap{flex:1;}
+.progress-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:5px;font-weight:500;}
+.progress-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--orange));border-radius:2px;transition:width 0.4s ease;}
+.q-scroll{flex:1;overflow-y:auto;padding-bottom:8px;}
+.q-card{padding:22px 20px;animation:fadeIn 0.25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.q-bloc{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:10px;}
+.q-num{font-size:10px;color:var(--muted);margin-bottom:6px;}
+.q-title{font-size:18px;font-weight:700;color:var(--dark);line-height:1.4;margin-bottom:8px;}
+.q-help{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:18px;font-style:italic;}
+.q-input-wrap{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:4px 14px;transition:border-color 0.2s;}
+.q-input-wrap:focus-within{border-color:var(--blue);}
+.q-input-wrap.filled{border-color:var(--green);background:#f0fdf4;}
+.q-input{flex:1;border:none;background:transparent;padding:13px 0;font-size:18px;font-weight:600;color:var(--dark);outline:none;width:100%;}
+.q-unit{font-size:13px;color:var(--muted);font-weight:500;flex-shrink:0;}
+.q-touch-note{background:var(--orange-pale);border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:14px;font-size:12.5px;color:var(--text);line-height:1.6;margin-top:4px;}
+.q-touch-note strong{color:var(--orange);}
+.q-nav{padding:14px 18px;display:flex;gap:8px;background:var(--surface);border-top:1px solid var(--border);position:sticky;bottom:0;}
+.btn-prev-q{background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-size:18px;padding:12px 16px;border-radius:11px;cursor:pointer;}
+.btn-next-q{flex:1;background:var(--blue);color:white;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:13px;border-radius:11px;border:none;cursor:pointer;}
+
+/* S2 SYNTHÈSE COÛT */
+#s2{background:var(--bg);overflow-y:auto;}
+.syn-scroll{padding:22px 20px;}
+.syn-hdr{text-align:center;margin-bottom:18px;}
+.syn-company{font-size:12px;color:var(--muted);margin-bottom:6px;}
+.syn-choc{font-size:17px;font-weight:800;color:var(--dark);line-height:1.4;}
+.syn-choc .big{color:var(--red);font-size:25px;display:block;margin:4px 0;}
+.syn-choc .yr{font-size:13px;color:var(--muted);font-weight:600;}
+/* graphique */
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 16px;margin-bottom:16px;}
+.chart-area{display:flex;align-items:flex-end;justify-content:center;gap:26px;height:240px;padding-top:10px;}
+.chart-col{display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;}
+.chart-stack{width:74px;border-radius:9px 9px 0 0;overflow:hidden;display:flex;flex-direction:column-reverse;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.chart-seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;min-height:15px;overflow:hidden;}
+.chart-bar{width:74px;border-radius:9px 9px 0 0;display:flex;align-items:flex-start;justify-content:center;color:#fff;font-weight:800;font-size:12px;padding-top:7px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.chart-lbl{margin-top:9px;font-size:11px;font-weight:700;text-align:center;color:var(--text);line-height:1.3;}
+.chart-lbl small{display:block;font-weight:400;color:var(--muted);font-size:10px;}
+.legend{display:flex;flex-direction:column;gap:7px;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);}
+.legend-it{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text);}
+.legend-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0;}
+.legend-v{margin-left:auto;font-weight:700;color:var(--dark);}
+/* tableau */
+.tbl-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:6px 0;margin-bottom:16px;overflow:hidden;}
+.tbl-row{display:grid;grid-template-columns:1fr auto;gap:6px;padding:11px 16px;border-bottom:1px solid var(--surface2);align-items:center;}
+.tbl-row:last-child{border-bottom:none;}
+.tbl-left{display:flex;align-items:flex-start;gap:8px;}
+.tbl-sw{width:10px;height:10px;border-radius:2px;margin-top:4px;flex-shrink:0;}
+.tbl-lbl{font-size:13px;font-weight:600;color:var(--dark);line-height:1.3;}
+.tbl-dit{font-size:11px;color:var(--muted);margin-top:1px;}
+.tbl-v{font-size:14px;font-weight:700;color:var(--c1);white-space:nowrap;}
+.tbl-tot{display:grid;grid-template-columns:1fr auto;padding:14px 16px;background:var(--orange-pale);align-items:center;}
+.tbl-tot-l{font-size:13px;font-weight:800;color:var(--dark);}
+.tbl-tot-v{font-size:18px;font-weight:800;color:var(--orange);}
+/* apport */
+.apport-card{background:linear-gradient(135deg,#ecfdf5,#f0fdf4);border:1.5px solid rgba(16,185,129,0.3);border-radius:16px;padding:18px;margin-bottom:16px;text-align:center;}
+.apport-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:10px;}
+.apport-v{font-size:30px;font-weight:800;color:var(--green);line-height:1;}
+.apport-u{font-size:12px;color:var(--green);font-weight:600;margin-bottom:10px;display:block;}
+.apport-sub{font-size:12px;color:var(--text);line-height:1.6;}
+.apport-sub strong{color:var(--dark);}
+/* offre */
+.offer-card{background:var(--blue-pale);border:1px solid rgba(37,99,235,0.2);border-radius:16px;padding:18px;margin-bottom:16px;}
+.offer-title{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:12px;}
+.offer-price-row{display:flex;align-items:baseline;gap:6px;justify-content:center;margin-bottom:4px;}
+.offer-price{font-size:30px;font-weight:800;color:var(--blue);}
+.offer-price-u{font-size:13px;color:var(--muted);font-weight:600;}
+.offer-calc{font-size:12px;color:var(--muted);text-align:center;margin-bottom:14px;}
+.offer-items{display:flex;flex-direction:column;gap:8px;}
+.offer-item{display:flex;gap:8px;font-size:12.5px;color:var(--text);align-items:flex-start;line-height:1.4;}
+.offer-chk{color:var(--blue);font-weight:700;flex-shrink:0;}
+/* transparence */
+.calc-toggle{width:100%;background:none;border:1px dashed var(--border);border-radius:12px;padding:11px;font-family:inherit;font-size:12px;font-weight:700;color:var(--blue);cursor:pointer;margin-bottom:14px;}
+.calc-box{display:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;font-size:11.5px;color:var(--text);line-height:1.6;}
+.calc-box.open{display:block;}
+.calc-box .h{font-weight:700;color:var(--dark);margin-bottom:6px;}
+.btn-email{width:100%;background:var(--orange);color:white;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:16px;border-radius:12px;border:none;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 16px rgba(249,115,22,0.3);}
+.btn-back-q{width:100%;background:transparent;color:var(--muted);font-size:12px;padding:10px;border:none;cursor:pointer;}
+
+/* S3 ENVOI */
+#s3{background:var(--bg);align-items:center;justify-content:center;padding:28px 20px;text-align:center;}
+.send-icon{font-size:48px;margin-bottom:14px;}
+.send-title{font-size:20px;font-weight:800;color:var(--dark);margin-bottom:6px;}
+.send-sub{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.send-form{width:100%;max-width:400px;text-align:left;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn-send-go{width:100%;background:var(--blue);color:white;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:15px;border-radius:12px;border:none;cursor:pointer;margin-top:16px;margin-bottom:10px;}
+.btn-skip{width:100%;background:transparent;color:var(--muted);font-size:12px;padding:10px;border:1px solid var(--border);border-radius:12px;cursor:pointer;}
+
+/* S4 CONFIRMATION */
+#s4{background:var(--bg);align-items:center;justify-content:center;padding:28px 20px;text-align:center;}
+.confirm-icon{font-size:56px;margin-bottom:14px;animation:pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);}
+@keyframes pop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.confirm-title{font-size:22px;font-weight:800;color:var(--dark);margin-bottom:6px;}
+.confirm-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.recap-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;width:100%;max-width:400px;text-align:left;margin-bottom:20px;}
+.recap-row{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid var(--border);gap:12px;}
+.recap-row:last-child{border-bottom:none;}
+.recap-lbl{color:var(--muted);flex-shrink:0;}
+.recap-val{color:var(--dark);font-weight:600;text-align:right;}
+.btn-new{background:var(--blue);color:white;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:15px 32px;border-radius:50px;border:none;cursor:pointer;width:100%;max-width:400px;}
+</style>
+</head>
+<body>
+
+<!-- ═══════ S0 ACCUEIL ═══════ -->
+<div id="s0" class="screen active">
+  <div class="logo-name">◆ PLANEQUIPE</div>
+  <span class="lucky-pill">LUCKY</span>
+  <span class="mode-pill">MODE COMMERCIAL · ENTRETIEN 30 MIN</span>
+  <div class="welcome-title">Entretien de découverte</div>
+  <div class="welcome-sub">On va explorer ensemble ce que votre organisation actuelle vous coûte vraiment — puis le chiffrer à partir de vos réponses.</div>
+  <div class="form-card">
+    <div class="field-group"><label class="field-label">Entreprise</label><input type="text" class="field-input" id="in-co" placeholder="Nom de l'entreprise" oninput="checkS0()"></div>
+    <div class="field-group"><label class="field-label">Interlocuteur</label><input type="text" class="field-input" id="in-ct" placeholder="Prénom Nom" oninput="checkS0()"></div>
+    <div class="field-group"><label class="field-label">Nombre de personnes à planifier</label><input type="number" class="field-input" id="in-eff" placeholder="Ex : 10" min="1" oninput="checkS0()"></div>
+    <div class="field-group"><label class="field-label">Secteur</label>
+      <div class="sector-mini" id="sec-grid">
+        <div class="sm-btn" data-s="🌿 Espaces Verts">🌿 Espaces Verts</div>
+        <div class="sm-btn" data-s="🧹 Nettoyage">🧹 Nettoyage</div>
+        <div class="sm-btn" data-s="🩺 Cabinet Infirmier">🩺 Cabinet Infirmier</div>
+        <div class="sm-btn" data-s="🚑 Ambulances / VSL">🚑 Ambulances / VSL</div>
+        <div class="sm-btn" data-s="🔧 Ramonage / Dépannage">🔧 Ramonage / Dépannage</div>
+        <div class="sm-btn" data-s="🍺 Livraison">🍺 Livraison</div>
+        <div class="sm-btn" data-s="🚜 Entretien Agricole">🚜 Entretien Agricole</div>
+        <div class="sm-btn" data-s="🔍 Autre">🔍 Autre</div>
+      </div>
+    </div>
+  </div>
+  <button class="btn-start" id="btn-s0" disabled onclick="startInterview()">Commencer l'entretien →</button>
+</div>
+
+<!-- ═══════ S1 QUESTIONS ═══════ -->
+<div id="s1" class="screen">
+  <div class="topbar">
+    <div class="back-btn" onclick="prevQ()">←</div>
+    <div class="progress-wrap">
+      <div class="progress-meta"><span id="pg-bloc">Découverte</span><span id="pg-count">1 / 8</span></div>
+      <div class="progress-track"><div class="progress-fill" id="pg-fill" style="width:12%"></div></div>
+    </div>
+  </div>
+  <div class="q-scroll" id="q-scroll"></div>
+  <div class="q-nav">
+    <button class="btn-prev-q" onclick="prevQ()">←</button>
+    <button class="btn-next-q" id="btn-nq" onclick="nextQ()">Suivant</button>
+  </div>
+</div>
+
+<!-- ═══════ S2 SYNTHÈSE ═══════ -->
+<div id="s2" class="screen"><div class="syn-scroll" id="syn-content"></div></div>
+
+<!-- ═══════ S3 ENVOI ═══════ -->
+<div id="s3" class="screen">
+  <div class="send-icon">📧</div>
+  <div class="send-title">Envoyer la synthèse</div>
+  <div class="send-sub">Le prospect reçoit le récap chiffré et le graphique par email.</div>
+  <div class="send-form">
+    <div class="field-group"><label class="field-label">Email du prospect</label><input type="email" class="field-input" id="inp-email" placeholder="prospect@email.com"></div>
+    <div class="row2">
+      <div class="field-group"><label class="field-label">Date de relance</label><input type="date" class="field-input" id="inp-date"></div>
+      <div class="field-group"><label class="field-label">Heure</label><input type="time" class="field-input" id="inp-time" value="10:00"></div>
+    </div>
+    <div class="field-group"><label class="field-label">Note</label><textarea class="field-input" id="inp-note" rows="2" placeholder="Note de relance..."></textarea></div>
+    <button class="btn-send-go" onclick="doSend()">✉ Envoyer & planifier la relance</button>
+    <button class="btn-skip" onclick="doSkip()">Passer cette étape</button>
+  </div>
+</div>
+
+<!-- ═══════ S4 CONFIRMATION ═══════ -->
+<div id="s4" class="screen">
+  <div class="confirm-icon">✅</div>
+  <div class="confirm-title">Entretien enregistré !</div>
+  <div class="confirm-sub" id="c-sub">La synthèse a été envoyée et la relance planifiée.</div>
+  <div class="recap-box" id="c-recap"></div>
+  <button class="btn-new" onclick="resetAll()">Nouveau prospect →</button>
+</div>
+
+<script>
+const SHEETS_URL="https://script.google.com/macros/s/AKfycbxYNmFIAmrjqxOeDLu4t9Noe862N5H5o_idEQBgIbEbxkLU1BSuxg5CgItMdI-IrLUX8g/exec";
+
+// ── Taux standards (note méthodologique) ──
+const TX={hChrg:25,hDir:50,km:0.40,reprise:80,remplacement:3000,sem:4.33,recup:0.60,ratioRetard:1/3};
+
+// ── Questionnaire de découverte (8 questions) ──
+// type "num" = chiffrante (champ saisie) · "touch" = qui touche (pas de saisie)
+const QS=[
+ {k:"q1",bloc:"Les imprévus",t:"Quand un salarié vous appelle malade à 7h du matin, ou arrive en retard sans prévenir, il se passe quoi dans l'heure, la matinée, parfois toute la journée qui suit ?",help:"Laissez-le raconter. Notez séparément les absences et les retards imprévus par semaine.",type:"multi",fields:[{k:"absSem",unit:"absences / semaine"},{k:"retSem",unit:"retards / semaine"}]},
+ {k:"q2",bloc:"Les imprévus",t:"Réorganiser le planning du jour à cause de cet imprévu ponctuel, ça vous prend combien de temps à chaque fois ?",help:"Le temps de gestion dans l'instant (hors planning structurel, vu juste après). En heures, ex : 1,5.",type:"multi",fields:[{k:"reorgH",unit:"heures / imprévu"}]},
+ {k:"q3",bloc:"La coordination",t:"Chaque semaine, combien de temps passez-vous à CONSTRUIRE vos plannings de départ — puis à les CORRIGER en permanence à cause des aléas ?",help:"Distinguez les deux : la conception initiale, et les retouches structurelles ensuite (hors imprévu ponctuel du jour, déjà compté).",type:"multi",fields:[{k:"planConstrH",unit:"h / sem — construire"},{k:"planCorrH",unit:"h / sem — corriger"}]},
+ {k:"_soir",bloc:"La coordination",t:"Ces plannings, vous les faites quand — sur vos heures de travail, ou le soir et le week-end ?",help:"Pas de chiffre. Cette question est là pour faire parler — le « le dimanche soir » vaut tous les arguments.",type:"touch",note:"💡 Laissez le silence. Sa réponse sur <strong>le soir / le week-end</strong> révèle la charge mentale que PLANEQUIPE va lever."},
+ {k:"q5",bloc:"Les déplacements",t:"Prenons un de vos véhicules sur une semaine : combien de kilomètres fait-il en trop — des allers-retours, des détours qu'une meilleure organisation aurait évités ?",help:"Raisonnez par véhicule, sur une semaine — c'est plus parlant. On multiplie ensuite par votre nombre de véhicules.",type:"multi",fields:[{k:"kmVeh",unit:"km / véhicule / semaine"},{k:"nbVeh",unit:"nombre de véhicules"}]},
+ {k:"q6",bloc:"La bonne personne",t:"Vous arrive-t-il d'envoyer quelqu'un sur une mission pour laquelle il n'était pas le mieux placé, faute de mieux sur le moment ?",help:"Combien de fois par mois environ ?",type:"multi",fields:[{k:"affMois",unit:"fois / mois"}]},
+ {k:"q7",bloc:"Attractivité & fidélité",t:"Si vos plannings étaient optimisés — horaires prévisibles, semaine qui se termine le vendredi midi — pensez-vous que vous recruteriez plus facilement, et que vous garderiez vos équipes plus longtemps ?",help:"Laissez-le imaginer. Puis, pour chiffrer : combien de départs par an pensez-vous pouvoir éviter avec une meilleure organisation ?",type:"multi",fields:[{k:"departsAn",unit:"départs évitables / an"}]},
+ {k:"_proj",bloc:"La projection",t:"Si je vous disais qu'on peut récupérer une bonne partie de tout ça — du temps, des kilomètres, du stress — vous le mettriez où, ce temps gagné ?",help:"Pas de chiffre. On le fait se projeter dans l'après, juste avant de lui montrer le coût actuel.",type:"touch",note:"💡 Sa réponse (développement commercial, qualité, vie perso…) devient <strong>votre argument de clôture</strong>."}
+];
+
+// ── Postes de coût + couleurs (alignés au visuel option 2) ──
+const POSTES=[
+ {k:"abs",col:"var(--c1)",lbl:"Absences & retards à gérer",calc:a=>Math.round(((a.absSem||0)+(a.retSem||0)*TX.ratioRetard)*(a.reorgH||0)*TX.sem*TX.hChrg),dit:a=>`${fnum(a.absSem||0)} abs + ${fnum(a.retSem||0)} ret/sem × ${fnum(a.reorgH||0)} h`,formule:`(retard = ⅓) × ${TX.sem} sem × ${TX.hChrg} €/h`},
+ {k:"plan",col:"var(--c2)",lbl:"Construire & corriger les plannings",calc:a=>Math.round(((a.planConstrH||0)+(a.planCorrH||0))*TX.sem*TX.hDir),dit:a=>`${fnum(a.planConstrH||0)} + ${fnum(a.planCorrH||0)} h/sem`,formule:`× ${TX.sem} sem × ${TX.hDir} €/h`},
+ {k:"km",col:"var(--c3)",lbl:"Kilomètres en trop",calc:a=>Math.round((a.kmVeh||0)*(a.nbVeh||0)*TX.sem*TX.km),dit:a=>`${fnum(a.kmVeh||0)} km × ${fnum(a.nbVeh||0)} véh./sem`,formule:`× ${TX.sem} sem × ${TX.km} €/km`},
+ {k:"aff",col:"var(--c4)",lbl:"Mauvaise affectation",calc:a=>Math.round((a.affMois||0)*TX.reprise),dit:a=>`${fnum(a.affMois||0)}/mois`,formule:`× ${TX.reprise} €/reprise`},
+ {k:"turn",col:"var(--c5)",lbl:"Turnover évitable",calc:a=>Math.round((a.departsAn||0)*TX.remplacement/12),dit:a=>`${fnum(a.departsAn||0)} départ(s) évitable(s)/an`,formule:`× ${TX.remplacement} € ÷ 12`}
+];;
+
+let ST={co:"",ct:"",eff:0,sec:"",qi:0,ans:{}};
+function fnum(n){return Number(n).toLocaleString("fr");}
+function euro(n){return Math.round(n).toLocaleString("fr")+" €";}
+
+// ── S0 ──
+document.querySelectorAll("#sec-grid .sm-btn").forEach(b=>{
+  b.onclick=()=>{document.querySelectorAll("#sec-grid .sm-btn").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");ST.sec=b.dataset.s;checkS0();};
+});
+function checkS0(){
+  const co=document.getElementById("in-co").value.trim();
+  const ct=document.getElementById("in-ct").value.trim();
+  const eff=parseInt(document.getElementById("in-eff").value)||0;
+  document.getElementById("btn-s0").disabled=!(co&&ct&&eff>0&&ST.sec);
+}
+function startInterview(){
+  ST.co=document.getElementById("in-co").value.trim();
+  ST.ct=document.getElementById("in-ct").value.trim();
+  ST.eff=parseInt(document.getElementById("in-eff").value)||0;
+  ST.qi=0;ST.ans={};
+  show("s1");rQ();
+}
+
+// ── S1 questions ──
+function rQ(){
+  const q=QS[ST.qi],tot=QS.length;
+  document.getElementById("pg-bloc").textContent=q.bloc;
+  document.getElementById("pg-count").textContent=(ST.qi+1)+" / "+tot;
+  document.getElementById("pg-fill").style.width=Math.round((ST.qi+1)/tot*100)+"%";
+  let body;
+  if(q.type==="touch"){
+    body=`<div class="q-touch-note">${q.note}</div>`;
+  }else{
+    body=q.fields.map(f=>{
+      const val=ST.ans[f.k]!=null?ST.ans[f.k]:"";
+      return `<div class="q-input-wrap${val!==""?" filled":""}" id="wrap-${f.k}" style="margin-bottom:10px;">
+        <input type="number" inputmode="decimal" class="q-input" id="qi-${f.k}" value="${val}" placeholder="0" oninput="onInput('${f.k}')" />
+        <span class="q-unit">${f.unit}</span></div>`;
+    }).join("");
+  }
+  document.getElementById("q-scroll").innerHTML=
+    `<div class="q-card"><div class="q-bloc">${q.bloc}</div><div class="q-num">Question ${ST.qi+1} sur ${tot}</div>
+     <div class="q-title">${q.t}</div><div class="q-help">${q.help}</div>${body}</div>`;
+  document.getElementById("btn-nq").textContent=(ST.qi===tot-1)?"Voir le coût →":"Suivant";
+}
+function onInput(k){
+  const v=document.getElementById("qi-"+k).value;
+  ST.ans[k]=v===""?null:parseFloat(v.replace(",","."));
+  document.getElementById("wrap-"+k).classList.toggle("filled",v!=="");
+}
+function nextQ(){
+  if(ST.qi<QS.length-1){ST.qi++;rQ();window.scrollTo(0,0);}
+  else{buildSynthese();show("s2");sendToSheets();}
+}
+function prevQ(){
+  if(ST.qi>0){ST.qi--;rQ();window.scrollTo(0,0);}
+  else{show("s0");}
+}
+
+// ── Moteur de chiffrage ──
+function compute(){
+  const a=ST.ans;
+  const lignes=POSTES.map(p=>({...p,v:p.calc(a),ditTxt:p.dit(a)}));
+  const total=lignes.reduce((t,l)=>t+l.v,0);
+  const abo=ST.eff*49;
+  const recup=Math.round(total*TX.recup);
+  return{lignes,total,abo,recup,annuel:total*12,net:recup-abo};
+}
+
+// ── S2 synthèse ──
+function buildSynthese(){
+  const r=compute();
+  const maxH=200; // hauteur barre coût total
+  // segments empilés
+  let stack="";
+  r.lignes.forEach(l=>{
+    if(l.v<=0)return;
+    const h=Math.max(15,Math.round(l.v/r.total*maxH));
+    stack+=`<div class="chart-seg" style="height:${h}px;background:${l.col};">${l.v>=200?euro(l.v):""}</div>`;
+  });
+  const hAbo=Math.max(14,Math.round(r.abo/r.total*maxH));
+  const hRec=Math.max(14,Math.round(r.recup/r.total*maxH));
+  // légende
+  let legend="";
+  r.lignes.forEach(l=>{if(l.v>0)legend+=`<div class="legend-it"><span class="legend-dot" style="background:${l.col}"></span>${l.lbl}<span class="legend-v">${euro(l.v)}</span></div>`;});
+  // tableau
+  let rows="";
+  r.lignes.forEach(l=>{if(l.v>0)rows+=`<div class="tbl-row"><div class="tbl-left"><span class="tbl-sw" style="background:${l.col}"></span><div><div class="tbl-lbl">${l.lbl}</div><div class="tbl-dit">${l.ditTxt} ${l.formule}</div></div></div><div class="tbl-v">${euro(l.v)}</div></div>`;});
+
+  document.getElementById("syn-content").innerHTML=`
+  <div class="syn-hdr">
+    <div class="syn-company">${ST.co} · ${ST.ct} · ${ST.sec}</div>
+    <div class="syn-choc">Votre organisation actuelle vous coûte<span class="big">${euro(r.total)} / mois</span><span class="yr">soit ${euro(r.annuel)} par an</span></div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-area">
+      <div class="chart-col"><div class="chart-stack" style="height:${maxH}px;">${stack}</div><div class="chart-lbl">Coût actuel<small>${euro(r.total)}/mois</small></div></div>
+      <div class="chart-col"><div class="chart-bar" style="height:${hAbo}px;background:var(--orange);">${r.abo>=300?euro(r.abo):""}</div><div class="chart-lbl">PLANEQUIPE<small>49 € × ${ST.eff}</small></div></div>
+      <div class="chart-col"><div class="chart-bar" style="height:${hRec}px;background:var(--green);">${euro(r.recup)}</div><div class="chart-lbl">Vous récupérez<small>chaque mois</small></div></div>
+    </div>
+    <div class="legend">${legend}</div>
+  </div>
+
+  <div class="tbl-card">${rows}<div class="tbl-tot"><div class="tbl-tot-l">Coût total de l'organisation actuelle</div><div class="tbl-tot-v">${euro(r.total)}</div></div></div>
+
+  <div class="apport-card">
+    <div class="apport-title">Ce que PLANEQUIPE vous récupère</div>
+    <div class="apport-v">${euro(r.recup)}</div><span class="apport-u">par mois (estimation prudente : 60 % du coût)</span>
+    <div class="apport-sub">Pour un abonnement de <strong>${euro(r.abo)}/mois</strong>, vous récupérez <strong>${euro(r.recup)}/mois</strong> — soit un bénéfice net de <strong>${euro(r.net)}/mois</strong>, dès le premier mois.</div>
+  </div>
+
+  <div class="offer-card">
+    <div class="offer-title">🌟 L'offre PLANEQUIPE</div>
+    <div class="offer-price-row"><span class="offer-price">${euro(r.abo)}</span><span class="offer-price-u">/ mois</span></div>
+    <div class="offer-calc">49 € / utilisateur × ${ST.eff} utilisateurs</div>
+    <div class="offer-items">
+      <div class="offer-item"><span class="offer-chk">✓</span> 1 an d'engagement, puis liberté totale — résiliable au mois</div>
+      <div class="offer-item"><span class="offer-chk">✓</span> Installation et accompagnement inclus</div>
+      <div class="offer-item"><span class="offer-chk">✓</span> ASTRA, votre assistant IA, présent dès le premier jour</div>
+      <div class="offer-item"><span class="offer-chk">✓</span> Toutes les mises à jour incluses</div>
+      <div class="offer-item"><span class="offer-chk">✓</span> Après un an, on vous garde par la valeur, pas par le contrat</div>
+    </div>
+  </div>
+
+  <button class="calc-toggle" onclick="document.getElementById('cbox').classList.toggle('open')">🧮 D'où viennent ces chiffres ? — transparence totale</button>
+  <div class="calc-box" id="cbox">
+    <div class="h">Chaque montant vient de VOS réponses :</div>
+    Absences : nb/semaine × durée × 4,33 semaines × 25 €/h (coût horaire chargé).<br>
+    Plannings : heures/semaine × 4,33 × 50 €/h (temps dirigeant).<br>
+    Kilomètres : km en trop × 0,40 €/km (coût complet véhicule).<br>
+    Affectation : nb/mois × 80 € (coût moyen d'une reprise).<br>
+    Turnover : départs/an × 3 000 € (coût de remplacement) ÷ 12.<br><br>
+    <div class="h">Récupérable :</div>
+    Nous affichons prudemment 60 % du coût total — la réalité dépasse souvent cette estimation. Tous les chiffres s'ajustent ensemble avec vos données réelles.
+  </div>
+
+  <button class="btn-email" onclick="show('s3')">📨 Envoyer la synthèse au prospect</button>
+  <button class="btn-back-q" onclick="show('s1');rQ()">← Revoir les réponses</button>
+  <div style="height:24px;"></div>`;
+}
+
+// ── Email (visuel reconstruit en HTML simple) ──
+function buildEmailHTML(r){
+  let segs="";
+  r.lignes.forEach(l=>{if(l.v>0)segs+=`<tr><td style="padding:6px 0;"><span style="display:inline-block;width:11px;height:11px;background:${l.col.replace('var(--c1)','#1B3A5C').replace('var(--c2)','#4A9BD4').replace('var(--c3)','#F77F00').replace('var(--c4)','#7E57C2').replace('var(--c5)','#26A69A')};border-radius:2px;margin-right:8px;"></span>${l.lbl}</td><td style="text-align:right;font-weight:700;">${euro(l.v)}</td></tr>`;});
+  return segs;
+}
+
+function doSend(){
+  const email=document.getElementById("inp-email").value.trim();
+  if(!email){alert("Veuillez saisir l'email du prospect.");return;}
+  const r=compute();
+  const prenom=ST.ct.split(" ")[0]||ST.ct;
+  const btn=document.querySelector(".btn-send-go");
+  btn.textContent="Envoi en cours...";btn.disabled=true;
+  const params={
+    to_email:email,prenom:prenom,secteur:ST.sec,entreprise:ST.co,
+    economies:euro(r.total),gain5ans:euro(r.recup),
+    investissement:euro(r.abo),roi:"dès le 1er mois",
+    name:"Frédéric Le Lez",email:"planequipef@gmail.com",
+    message:"Coût actuel estimé "+euro(r.total)+"/mois · PLANEQUIPE récupère "+euro(r.recup)+"/mois pour "+euro(r.abo)+"/mois."
+  };
+  emailjs.send("Lucky","template_fr3vfe3",params).then(function(){
+    btn.textContent="✉ Envoyer & planifier la relance";btn.disabled=false;
+    document.getElementById("c-recap").innerHTML=recap(email,document.getElementById("inp-date").value||"—",document.getElementById("inp-time").value||"—",document.getElementById("inp-note").value);
+    show("s4");
+  }).catch(function(err){
+    btn.textContent="✉ Envoyer & planifier la relance";btn.disabled=false;
+    alert("Erreur envoi. Vérifiez votre connexion.");console.log(err);
+  });
+}
+function doSkip(){
+  document.getElementById("c-sub").textContent="Entretien enregistré. Pensez à planifier votre relance.";
+  document.getElementById("c-recap").innerHTML=recap("—","—","—","");
+  show("s4");
+}
+function recap(email,date,time,note){
+  const r=compute();
+  return `<div class="recap-row"><span class="recap-lbl">Entreprise</span><span class="recap-val">${ST.co}</span></div>
+  <div class="recap-row"><span class="recap-lbl">Contact</span><span class="recap-val">${ST.ct}</span></div>
+  <div class="recap-row"><span class="recap-lbl">Secteur</span><span class="recap-val">${ST.sec}</span></div>
+  <div class="recap-row"><span class="recap-lbl">Coût actuel estimé</span><span class="recap-val">${euro(r.total)}/mois</span></div>
+  <div class="recap-row"><span class="recap-lbl">PLANEQUIPE récupère</span><span class="recap-val">${euro(r.recup)}/mois</span></div>
+  <div class="recap-row"><span class="recap-lbl">Abonnement</span><span class="recap-val">${euro(r.abo)}/mois</span></div>
+  <div class="recap-row"><span class="recap-lbl">Email</span><span class="recap-val">${email}</span></div>
+  <div class="recap-row"><span class="recap-lbl">Relance</span><span class="recap-val">${date} ${time!=="—"?"à "+time:""}</span></div>
+  ${note?`<div class="recap-row"><span class="recap-lbl">Note</span><span class="recap-val">${note}</span></div>`:""}`;
+}
+
+// ── Google Sheets (base commerciale) ──
+function sendToSheets(){
+  const r=compute(),a=ST.ans;
+  const data={
+    type:"commercial",entreprise:ST.co,contact:ST.ct,secteur:ST.sec,effectif:ST.eff,
+    cout_mensuel:r.total,cout_annuel:r.annuel,recuperable:r.recup,abonnement:r.abo,benefice_net:r.net,
+    absences_sem:a.absSem||"",reorg_h:a.reorgH||"",planning_h:a.planH||"",km_mois:a.kmMois||"",affectation_mois:a.affMois||"",departs_an:a.departsAn||"",
+    date:new Date().toLocaleString("fr-FR")
+  };
+  fetch(SHEETS_URL,{method:"POST",body:JSON.stringify(data),mode:"no-cors"}).catch(()=>{});
+}
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");window.scrollTo(0,0);
+}
+function resetAll(){
+  ST={co:"",ct:"",eff:0,sec:"",qi:0,ans:{}};
+  document.getElementById("in-co").value="";document.getElementById("in-ct").value="";document.getElementById("in-eff").value="";
+  document.querySelectorAll("#sec-grid .sm-btn").forEach(x=>x.classList.remove("sel"));
+  document.getElementById("inp-email").value="";document.getElementById("inp-note").value="";
+  document.getElementById("btn-s0").disabled=true;
+  document.getElementById("c-sub").textContent="La synthèse a été envoyée et la relance planifiée.";
+  show("s0");
+}
+</script>
+</body>
+</html>
